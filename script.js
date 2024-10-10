@@ -911,7 +911,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 				var w = VRTTimeShapes[i].width/2;
 				var h = VRTTimeShapes[i].height/2;
 	        	if (x >= (VRTTimeShapes[i].shapeX-w) && x <= (VRTTimeShapes[i].shapeX + w*2) && 
-	        		y >= (VRTTimeShapes[i].shapeY-h) && y <= (VRTTimeShapes[i].shapeY + h*2)) {	
+	        		y >= (VRTTimeShapes[i].shapeY-h) && y <= (VRTTimeShapes[i].shapeY + h*2+5)) {	
 	        		if (event.button == 0)
 	        		{
 	        			var selectedTime = VRTTimeShapes[i].time;
@@ -944,8 +944,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			 var len = VRTLevelShapes.length;
 			for (let i=0; i < len; i++)
 			{	
-				var w = VRTLevelShapes[i].width/2;
-				var h = VRTLevelShapes[i].height/2;
+				var w = VRTLevelShapes[i].width;
+				var h = VRTLevelShapes[i].height;
 	        	if (x >= (VRTLevelShapes[i].shapeX-w) && x <= (VRTLevelShapes[i].shapeX + w*2) && 
 	        		y >= (VRTLevelShapes[i].shapeY-h) && y <= (VRTLevelShapes[i].shapeY + h)) {	
 	        		if (event.button == 0)
@@ -1485,7 +1485,6 @@ function refreshVrt(Can)
 }
 function drawVrt(Can)
 {
-		VRTTimeShapes = [];
 		if (hookedFlight >= 0)
 		{
   			var currentNearestWholeLevel = Math.round(trajectories[hookedFlight][0].level/10)*10;
@@ -1503,7 +1502,8 @@ function drawVrt(Can)
 
         //tctx.strokeStyle = '#2b4952';
 		tctx.lineWidth=1;
-		
+		VRTTimeShapes = [];
+
         // draw the times
     	for (let lineno = 1; lineno <= numTimes ; lineno++)
     	{  
@@ -1520,6 +1520,8 @@ function drawVrt(Can)
 			} else {
 				tctx.fillStyle = '#a0a0a0';
 			}
+			//tctx.fillRect(xcoord-5,Can.height-12,12,20);
+			//tctx.stroke();
 			tctx.fillText(String((lineno)*vrtScaleMins),xcoord-5, Can.height-5);
 			VRTTimeShapes.push({shapeX: xcoord-5, shapeY: Can.height-5, width: 12,height:20, time: lineno*vrtScaleMins});
 			
@@ -1543,14 +1545,15 @@ function drawVrt(Can)
 			tctx.stroke()
 							//tctx.strokeStyle = '#ffffff';
 
-			tctx.fillStyle = '#081920';
-			tctx.fillRect(Can.width-30,ycoord-18,40,18);
+			tctx.fillStyle = '#081920';			
+
+			tctx.fillRect(Can.width-30,ycoord-25,40,40);
+
 			tctx.font = "12px Roboto";
 			if (selectedClearanceLevel != 0 && selectedClearanceLevel== ((lineno)*vrtGraduation)+vrtMinLevel)
 			{
 				//tctx.lineWidth=2;
 				tctx.fillStyle = '#0080FF';
-				//tctx.strokeStyle = '#ffffff';
 			}
 			else
 			{
@@ -1559,8 +1562,9 @@ function drawVrt(Can)
 		        tctx.strokeStyle = '#2b4952';
 		
 			}
+
 			tctx.fillText(String(lineno*vrtGraduation+vrtMinLevel),Can.width-25, ycoord-5);
-			VRTLevelShapes.push({shapeX: Can.width-12, shapeY: ycoord-5, width: 25,height:10, level: lineno*vrtGraduation+vrtMinLevel});
+			VRTLevelShapes.push({shapeX: Can.width-12, shapeY: ycoord-10, width: 25,height:15, level: lineno*vrtGraduation+vrtMinLevel});
 			
     	}    	    	
 }
