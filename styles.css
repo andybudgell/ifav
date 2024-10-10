@@ -1,0 +1,518 @@
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: rgb(20,20,20); /* Set background color to black */
+            overflow: hidden; /* Hide scrollbars */
+            font-family: Roboto;
+
+        }
+        #main {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .toolbar {
+        	margin: 0;
+        	padding: 5px;
+
+        }
+        .button {
+            height: 100%;
+            padding: 0px; /* Optional padding */
+            opacity: 1.0;
+            background-color: rgb(20,20,20); /* Set background color to black */
+            color: rgb(95,105,110,250);
+            width: 100%;
+            font-size: 14px;          
+        }
+        button {
+        	height: 20px;
+        	background-color: rgb(20,20,20); /* Set background color to black */
+            color: rgb(95,105,110,170);
+            font-size: 16px;          
+        }
+        select {
+        	height: 20px;
+        	background-color: rgb(20,20,20); /* Set background color to black */
+            color: rgb(95,105,110,170);
+            font-size: 16px;          
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+            background-color: rgb(20,20,20); /* Set background color to black */
+        }
+        /* pointer-events: none; as this allows the default leaflet mouse behaviour */
+        #radar {
+        	pointer-events: none;
+        	position: absolute;
+        	top: 50px;
+        	left: 0;
+        	width: 60%;
+        	z-index: 1000;
+        }
+        .leaflet-container {
+            height: 100%;
+            width: 100%;
+            background: #202020 !important; /* Ensure background color is applied to the map container */
+            border: 2px solid #808080;
+        }
+        .top-canvas-container {
+            height: 100%;
+            width: 100%;
+            background-color: #0A2732; 
+            border: 2px solid #808080;
+        }
+        .bot-canvas-container {
+            height: 5%;
+            width: 100%;
+            background-color: #081920; /* Set background color to black */
+            border: 2px solid #808080;
+
+        }
+        .toolbar-canvas-container {
+        	height: 5%;
+        	width: 100%;
+        	background-color: rgb(30,30,30); /* Set background color to black */
+		}
+		.radar-canvas-container {
+			height: 100%;
+			width: 60%;
+			background-color: #00000; /* Set background color to black */
+			z-index: 1000;
+	}
+        table {
+            width: 100%;
+            height: 100%;
+            border-collapse: collapse;
+        }
+        td,th {
+            padding: 0;
+                        color: rgb(95,105,110,170);
+
+        }
+
+		.custom-label-overlay {
+    		position: absolute;
+    		background-color: rgba(20, 20, 20, 0.2);
+    		padding: 0px;
+    		border: 1px solid #ccc;
+    		font-family: Roboto;
+    		font-size: 10px;
+		}
+		.clearance-table{
+		
+		}
+		.image-container {
+            display: flex;
+		    margin-left:20px;
+        }
+
+.custom-label {
+    color: rgb(95,105,110,170);
+ 	font-family: Roboto;
+	margin-left: 10px;
+	margin-right: 10px;
+    font-weight: bold;
+    font-size: 24px;
+
+}
+.custom-popup {
+    background-color: black;
+    opacity: 0.8;
+    padding: 0px;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
+    width: 50px; /* Adjust width as needed */
+}
+
+.custom-popup h2 {
+    font-size: 16px;
+    margin-bottom: 0px;
+    margin: 0px;
+    margin-left:0px;
+}
+
+.custom-popup p {
+    font-size: 14px;
+    color: #333;
+    padding: 0px;
+}
+.leaflet-popup-content-wrapper {
+    border-radius: 0px; /* Adjust as needed */
+    padding: 0px;
+	margin
+}
+
+.leaflet-popup-tip-container {
+    display: none; /* Hide the arrow */
+}
+
+.leaflet-zoom-anim .leaflet-tile, .leaflet-pan-anim .leaflet-tile {
+            transition: transform 0.01s; /* Change the duration here */
+            opacity: 0.1;
+}
+
+.fix-tooltip {
+    background-color: transparent;
+    border: none !important;
+    box-shadow: none;
+    font-size: 10px;
+    font-weight: normal;
+    color: rgb(180,180,0); 
+    fillOpacity:0.2;
+
+}
+* Hide the tooltip arrow */
+.fix-tooltip .leaflet-tooltip-top:before,
+.fix-tooltip .leaflet-tooltip-bottom:before,
+.fix-tooltip .leaflet-tooltip-left:before,
+.fix-tooltip .leaflet-tooltip-right:before {
+    display: none !important;  /* Remove the tooltip arrow */
+    content: none !important;
+}
+* Hide the tooltip arrow */
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+    display: none !important;  /* Remove the tooltip arrow */
+    content: none !important;
+}
+.airport-tooltip {
+    background-color: transparent;
+    fill: "#f0f0f0";
+    border: none;
+    box-shadow: none;
+    font-size: 11px;
+    font-weight: normal;
+    color: rgb(255,255,255); 
+    fillOpacity:0.8;
+    border-width: 0;
+
+    }    
+.control-button-play {
+        width: 30;
+        height: 30;
+        filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+    }
+.control-button-pause {
+        width: 30;
+        height: 30;
+        filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+    }
+.control-button svg {
+            fill: blue; /* Change the color to blue */
+}
+
+.plusminusbutton svg {
+		fill: 'white';
+        filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+}
+.clearance-table-container{
+ 	display: block; 
+ 	border: 1px solid black;
+	background-color:#101010;
+	overflow-y: scroll;
+	height: 80%; 
+	
+}
+
+.clearance-entry-container{
+	display: block; 
+ 	border: 1px solid black;
+	background-color:#101010;
+	overflow: hide;
+	height: 60px;
+	padding: 10px;	
+}
+
+.clearance-table {
+            width: 95%;
+            height: 100%; /* Set the table height as a percentage of the container */
+            border-collapse: collapse;
+            table-layout: fixed;
+            color: rgba(70,195,215,255);        
+}
+.clearance-table tr{
+	height: 20px;
+	padding: 0px;
+}
+
+td #clearance-table{
+	padding:0px;
+	height:20px;
+	text-align: center;
+	color: rgba(70,195,215,255);
+
+}
+.clearance-table th {
+	padding: 5px;
+	height: 20px;
+    position: sticky;
+}
+
+.clearance-table-issue-time {
+	width : 100px;
+	text-align: center;
+	rgba(70,195,215,255);
+
+}
+
+.clearance-entry-table tr{
+	height:20px;
+}
+
+.clearance-entry-table td
+{
+	padding: 0px;
+	height: 20px;
+}
+
+.enter-button
+{
+    font-size: 15px;
+	color: #00ff00;
+    background-color: #202020;
+    margin: 10px 5px;
+}
+
+.enter-button:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+.cancel-button
+{
+    font-size: 15px;
+	color: #ff0000;
+    background-color: #000000;
+}
+.cancel-button:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+.level-input
+{
+	width: 60px;
+	height: 25px;
+	background-color: #202020;
+	border: none;
+	color: white;
+	padding: 5px;
+}
+
+input[type=number] {
+  -webkit-appearance: none;  /* Chrome, Safari, Edge */
+  -moz-appearance: textfield;  /* Firefox */
+  appearance: textfield;
+  margin: 0;  /* Remove margin in Firefox */
+  width: 60px;
+  height:30px;
+  font-size: 18px; /* Adjust the font size */
+
+}
+
+/* Force Edge and Webkit browsers to show spinner buttons */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: inner-spin-button;
+  display: block;  /* Ensures spinner buttons are displayed */
+  opacity: 1;  /* Make sure the buttons are fully visible */
+	margin-left: 10px;
+}
+*/
+.switch {
+  position:sticky ; 
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 1;
+  width: 20;
+  height: 20;
+}
+
+table #emergencyTable{
+	table-layout: fixed;
+	position: absolute;
+	height: 150px;	
+}
+#conflictsTable{
+	table-layout: fixed;
+	position: absolute;
+	height: 130px;	
+}
+#conflictsTable td{
+	height: 20px;
+}
+
+#actionsTable {	
+	table-layout: fixed;
+	position: relative;
+	top: 100px;
+	height: 130px;	
+}
+
+table#emergencyTable tr{
+border-bottom: 2px solid;
+height: 20px;
+}
+td #emergencyTable {
+	text-align: left;
+	vertical-align: top;
+	color: rgba(70,195,215,255);
+	padding: 5px;
+	z-index:1002;
+	height: 20px;
+	
+}
+select#divertAirports{
+   	color: rgba(70,195,215,255);
+
+}
+// fix colour!
+// fix opacity
+
+.custom-time-input {
+  display: flex;
+  align-items: center;
+}
+
+.custom-time-input button {
+  width: 20px;
+  height: 16px;
+  font-size: 12px;
+  background-color: #505050;
+  border: 1px solid #404040;
+  cursor: pointer;
+  color: white;
+  margin: 2px;
+  padding: 1px 1px 1px 1px;
+}
+
+.custom-time-input input[type=number] {
+  width: 60px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  height: 40px;
+}
+
+.time-control-table{
+            table-layout: fixed;  
+            border: 2px solid #808080;	
+}
+
+.movableDiv{
+position: absolute;
+  top: 600px;
+  left: 800px;
+  height: 200px;
+  width: 200px;
+  z-index: 1010;
+  background-color: #202020;
+  border: 1px solid #e00;
+  text-align: left;
+  opacity: 1.0;
+}
+.movableDivHeader{
+padding: 5px;
+  opacity: 1.0;
+  display: flex;
+  cursor: move;
+  z-index: 1010;
+  background-color: #000;
+  color: #e00;
+  font-size: 15px;
+
+
+}
+button#closeBut{
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            color: #d0d0d0;
+}
+
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 12x;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: grey;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 18px;
+  left: 2px;
+  bottom: 1px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .1s;
+}
+
+input:checked + .slider {
+  background-color: rgba(70,195,215,255);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(18px);
+}
+
+p{
+margin: 0px 0px 0px 0px;
+}
+
+.increment{
+	background-color: #ff0000;
+}
+.decrement{
+	background-color: #00ff00;
+}
+
+.popupTextStyle{
+	color: rgba(70,195,215,255);
+}
+button#playpause{
+width: 100%;
+text-align: center;
+}
+
+.ThreeDI{
+text-align: center;
+}

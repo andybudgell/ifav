@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iFAV3</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">    
+</head>
+<body>
+    <script src="./geojsondata.js"></script>
+    <script src="./script.js"></script>
+    <script src="./emergency.js"></script>
+    <script src="./conflicts.js"></script>
+    <script src="./mtcd.js"></script>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+	<table id="main">
+ 		<tr>	 		 
+ 			<td height="4%" class="toolbar" colspan="2">
+ 				<table width="100%" id="time_control" class="time_control_table">
+ 				<tr>
+ 					<td id="menu" width="70%">
+ 					<select name="mode" id="mode">
+						<option value="CCD">Continuous Climb and Descent</option>
+						<option value="ECD">Enhanced Conflict Detection</option>
+						<option value="ESS1">Emergency Support 1</option>
+						<option value="ESS2">Emergency Support 2</option>
+						<option value="RAN">Random Flights</option>
+					</select>
+					<button onclick="Start()">Select</button>
+					<label>Auto Conflict Detection</label>
+					<label class="switch">
+					  <input id="auto" type="checkbox" onchange='AutoDetectionChanged()'>
+					  <span class="slider"></span>
+					</label>					</td> 		
+ 					<td width="100" class="custom-label" id="clock">09:00:00</td>
+					<td width="100">
+			    		<div class="buttons">
+  						<button id="playpause" onclick="playpause()" type="button">
+   						 <i class="uk-icon-play"></i>Pause</button>  						
+						</div>
+					</td>
+					<td class="ThreeDI">3Di:<label id="3di"></label></td>
+			 	</tr>
+			 	</table>
+ 			</td>
+ 		</tr>
+        <tr>           
+	        <td width="60%" rowspan="2">
+                <div id="map"></div>
+                <canvas id ="radar" class="radar-canvas-container"></canvas>
+            </td>
+            <td width="40%" height="50%">
+                <canvas id="top" class="top-canvas-container"></canvas>
+            </td>
+        </tr>
+        <tr>
+            <td class="clearance-table-cell" width="40%" height='50%' valign="top" align="center">
+			 <div class="clearance-entry-container"></div>			 
+			<button id="allEventsSwitch">Show All</button>
+
+             <div class="clearance-table-container"></div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
