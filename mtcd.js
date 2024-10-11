@@ -288,27 +288,25 @@ function probeTrajectories()
     			}
     		}
     	}
-    
-    	if (mode == "ALL")
-    	{
-    		interactionVectors = [];
-			if (interactionVectors.length == 0)
-			{
-    			let keys = Array.from(iMap.keys());
-				for (k = 0; k < keys.length; k++)
-				{			
-					var iflights = iMap.get(keys[k]);
-					if (iflights.length > 1 && interactionVectors.length == 0)
-					{
-						console.log("more than 1");			
-						for (let i = 0; i < iflights.length; i++)
-						{ 
-							interactionVectors.push([keys[k],iflights[i]]);				
-						}				
-					}
+        
+    	interactionVectors = [];
+		if (interactionVectors.length == 0)
+		{
+    		let keys = Array.from(iMap.keys());
+			for (k = 0; k < keys.length; k++)
+			{			
+				var iflights = iMap.get(keys[k]);
+				if (iflights.length > 1 && interactionVectors.length == 0)
+				{
+					console.log("more than 1");			
+					for (let i = 0; i < iflights.length; i++)
+					{ 
+						interactionVectors.push([keys[k],iflights[i]]);				
+					}				
 				}
-    		}    	
-    	} // mode = "ALL"
+			}
+    	}    	
+    
     }
     	
 	return bInteractionFound;	

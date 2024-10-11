@@ -58,7 +58,7 @@
         .leaflet-container {
             height: 100%;
             width: 100%;
-            background: #202020 !important; /* Ensure background color is applied to the map container */
+            background: #101010 !important; /* Ensure background color is applied to the map container */
             border: 2px solid #808080;
         }
         .top-canvas-container {
@@ -515,4 +515,7 @@ text-align: center;
 
 .ThreeDI{
 text-align: center;
+}
+label#tdilabel{
+	color: rgba(70,195,215,255);
 }

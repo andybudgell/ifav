@@ -12,8 +12,11 @@ var vrtTimeHorizonMins = 30.0;
 var vrtScaleMins = 1.0;
 var numTimes = vrtTimeHorizonMins/vrtScaleMins;
 var vrtCurrentPosOffset = 5;
-var vrtMaxLevel = 400;
-var vrtMinLevel = 2;
+var vrtMaxLevel = 330;
+var vrtMaxMaxLevel = 330;
+var vrtMinLevel = 180;
+var vrtMinMinLevel = 0;
+
 var vrtGraduation = 10;
 var bSetClearanceIssueTime = true;
 var selectedClearanceIssueTime = 0;
@@ -862,15 +865,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			{	    
 			    const x = event.detail.clientX - rect.left;
 		        const y = event.detail.clientY - rect.top;
-				var w = TDBShapes[i].width/2;
-				var h = TDBShapes[i].height/2;
-	        	if (x >= (TDBShapes[i].x-w) && x <= (TDBShapes[i].x + w*2) && 
-	        		y >= (TDBShapes[i].y-h) && y <= (TDBShapes[i].y + h)) {	
+				var w = TDBShapes[i].width;
+				var h = TDBShapes[i].height;
+	        	if (x >= (TDBShapes[i].x) && x <= (TDBShapes[i].x + w) && 
+	        		y >= (TDBShapes[i].y) && y <= (TDBShapes[i].y + h)) {	
 	        		if (event.detail.button == 2)
 	        		{	        		
 	   				    showrouteflightshape = i;
 					    drawRoute(TDBShapes[i]);
-					    setTimeout(()=>{showrouteflightshape = -1;},5000);
+					    setTimeout(()=>{showrouteflightshape = -1;},6000);
 					    return;
 					    
 					}
@@ -881,7 +884,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		        }
 		    }
     	});	
-    	
+	    toprightCanvas.addEventListener('wheel', function(event) {
+	    	if (event.deltaY > 0){
+	    		if (vrtMinLevel >= vrtMinMinLevel){		    	
+		    		vrtMinLevel = vrtMinLevel-10;
+		    		vrtMaxLevel = vrtMaxLevel-10;
+		    	}
+	    		
+	    	}else if (vrtMaxLevel <= vrtMaxMaxLevel){
+	    		console.log("Wheely up");
+	    		vrtMinLevel = vrtMinLevel+10;
+	    		vrtMaxLevel = vrtMaxLevel+10;
+	    	}
+    	   	refreshVrt(toprightCanvas);	
+
+	    });
+	    	
+
     	// Event listener for mousedown on the vrt
     	toprightCanvas.addEventListener('mousedown', (event) => {
 	        const rect = toprightCanvas.getBoundingClientRect();
@@ -1036,6 +1055,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	    	
 });
 
+
 function levelClearanceProbeChanged(){
 	updateProbeEvent(false);
 	enableClearanceButtons(true);
@@ -1044,12 +1064,29 @@ function levelClearanceProbeChanged(){
 }
 function HookFlight(flightid){
 	hookedFlight=flightid;
+	let currentNearestWholeLevel = Math.round(trajectories[hookedFlight][0].level/10)*10;
+
+	vrtMinLevel = currentNearestWholeLevel-70;
+	if (vrtMinLevel < vrtMinMinLevel){
+		vrtMinLevel = vrtMinMinLevel;
+	}
+	
+	vrtMaxLevel = currentNearestWholeLevel+70;
+	if (vrtMaxLevel > vrtMaxMaxLevel){
+		vrtMaxLevel = vrtMaxMaxLevel;
+	}
    	refreshVrt(toprightCanvas);
    	populateClearanceTable(hookedFlight);
    	populateClearanceEntry(hookedFlight);
+   	
+   	// put random value in 3di
+
+   	label = document.getElementById('tdilabel');
+   	label.textContent = "  "+getRandomNumber(20,60);
 }  
- // Map a point (lat, lon) to canvas coordinates
-    function mapPointToRadarCanvas(can, lat, lon) {
+
+// Map a point (lat, lon) to canvas coordinates
+function mapPointToRadarCanvas(can, lat, lon) {
         // Map bounds (adjust as necessary)
         var bounds = map.getBounds();
         var northWest = bounds.getNorthWest();
@@ -1210,7 +1247,7 @@ function drawTracks(Canvas)
 	       			}
 	       			
 	   				// Set the fill style (color)
-       				thisctx.fillStyle = 'rgb(30,30,30,255)';
+       				thisctx.fillStyle = 'rgb(35,35,35,255)';
        				// Draw the filled rectangle
 	   				thisctx.fillRect(p1.x , p1.y-11, tdbWidth , tdbHeight);
 	       			drawArrow(thisctx, p1.x+20, p1.y+20, trackPositions[f].bearing,25,40);					       								        						
@@ -1233,7 +1270,7 @@ function drawTracks(Canvas)
 		   			}
 
 	   				// store the shape
-	   				TDBShapes.push({flightid: f, x: p1.x, y: p1.y, width: tdbWidth , height: tdbHeight, colour: 'rgb(30,30,30,90)', nextpoint: 1});
+	   				TDBShapes.push({flightid: f, x: p1.x, y: p1.y-11, width: tdbWidth , height: tdbHeight, colour: 'rgb(30,30,30,90)', nextpoint: 1});
 	   			}
 	   			}
 	   		}	    				
@@ -1485,18 +1522,18 @@ function refreshVrt(Can)
 }
 function drawVrt(Can)
 {
-		if (hookedFlight >= 0)
-		{
-  			var currentNearestWholeLevel = Math.round(trajectories[hookedFlight][0].level/10)*10;
-  			vrtMaxLevel = currentNearestWholeLevel+130;
-  			vrtMinLevel = currentNearestWholeLevel-100;
-  			if (vrtMinLevel < 0)
-  			{
-	  			vrtMinLevel=0;
-	  		}
-  		}
-		vrtMinLevel=180;
-		vrtMaxLevel=330;
+		//if (hookedFlight >= 0)
+//		{
+//  			var currentNearestWholeLevel = Math.round(trajectories[hookedFlight][0].level/10)*10;
+//  			vrtMaxLevel = currentNearestWholeLevel+80;
+//  			vrtMinLevel = currentNearestWholeLevel-80;
+//  			if (vrtMinLevel < 0)
+//  			{
+//	  			vrtMinLevel=0;
+//	  		}
+//  		}
+//		vrtMinLevel=180;
+//		vrtMaxLevel=330;
         const tctx = Can.getContext('2d');
         tctx.clearRect(0, 0, Can.width, Can.height); // Clear vrt
 
@@ -2547,14 +2584,14 @@ function Start()
 		calculateInitialTrackPositions();
 	   	calculateTrajectoriesV2();		
 	}
-	else if (mode == "ESS1")
+	else if (mode == "ESS")
 	{
 		// reset the clock and add the default flights and clearance events
 		simTime = setTimeFromString(simTime, nineOclock);
 		flights = JSON.parse(JSON.stringify(testflights));
 		clearanceEvents = deepCopyMap(initClearanceEvents);
 		// Setup emergency events and aircraft
-		createEmergencyEvents1();
+		createEmergencyEvents();
 		
 		populateClearanceTable(-1);
 		TDBShapes = [];		
@@ -2564,23 +2601,7 @@ function Start()
 		map.setView([51.08195849927352, -1.7997468147947484], 9);
 		//hookedFlight = 2;
 
-	}
-	else if (mode == "ESS2")
-	{
-	// reset the clock and add the default flights and clearance events
-		simTime = setTimeFromString(simTime, nineOclock);
-		flights = JSON.parse(JSON.stringify(testflights));
-		clearanceEvents = deepCopyMap(initClearanceEvents);
-		// Setup emergency events and aircraft
-		createEmergencyEvents2();
-		
-		populateClearanceTable(-1);
-		TDBShapes = [];		
-		calculateInitialTrackPositions();
-	   	calculateTrajectoriesV2();
-		emergencyEventsIntervalId = setInterval(pollEmergencyEvents,1000);
-		map.setView([52.08195849927352, -1.0997468147947484], 9);
-	}
+	}	
 	else if (mode == "ECD"){
 	// reset the clock and add the default flights and clearance events
 		simTime = setTimeFromString(simTime, nineOclock);

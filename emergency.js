@@ -1,14 +1,14 @@
 
 var emergencyEvents = new Array();
-var emergencyEvent1 = {time: "09:00:00",callsign: "ES001",type: "SMOKE IN COCKPIT", nearestAirport: "EGLL", suggestedAirports: ["EGLL","EGGD","EGHF"],route: ["OCK","EGLL"]};
-var emergencyEvent2 = {time: "09:00:02",callsign: "ES002",type: "UNKNOWN HARDWARE FAILURE", nearestAirport: "EGBN", suggestedAirports: ["EGLL","EGGD","EGHF"],route: ["OCK","EGLL"]};
+var emergencyEvent1 = {time: "09:00:02",callsign: "ES001",type: "SMOKE IN COCKPIT", nearestAirport: "EGLL", suggestedAirports: ["EGLL","EGGD","EGHF"],route: ["OCK","EGLL"]};
+var emergencyEvent2 = {time: "09:05:02",callsign: "ES002",type: "UNKNOWN HARDWARE FAILURE", nearestAirport: "EGBN", suggestedAirports: ["EGLL","EGGD","EGHF"],route: ["OCK","EGLL"]};
 
 var emergencyFlightES1 = 
-				{callsign: "ES001",startTime: "09:00:00",ifl: 150,initSpeed: 300,					
+				{callsign: "ES001",startTime: "09:00:00",ifl: 300,initSpeed: 300,					
 				  fixroute:[{name:"KAPEX"},
 				  			{name:"EGBN"}]};
 // simulate steep descent
-var emergencyClearanceEventES1 = {issue_time:"09:00:10",time:"09:13:00",level:20,probe:false};
+var emergencyClearanceEventES1 = {issue_time:"09:00:10",time:"09:20:00",level:20,probe:false};
 
 var emergencyFlightES2 = 
 				{callsign: "ES002", startTime: "09:00:02",ifl: 280,initSpeed: 300,rfl: 0,cfl: 0,					
@@ -35,30 +35,20 @@ function pollEmergencyEvents(){
 //    Add the appropriate clearance event (e.g. steep descent event) to the event maps.
 // 2) Show the emergency popup
 // 
-function createEmergencyEvents1(){
+function createEmergencyEvents(){
 	// Add aircraft to map	
+	emergencyEvents = [];
 	closeEmergencyPopup();
-	let nextFlightId = flights.length;
+	let nextFlightId1 = flights.length;
 	flights.push(emergencyFlightES1);
-	emergencyEvents = [];
-	// add clearanceEvents here with correct flightid
-	// comment out for now Matt T 26/9
-	clearanceEvents.set(nextFlightId,[emergencyClearanceEventES1]);
-   	emergencyEvents.push(emergencyEvent1);
-   	
-}
-
-function createEmergencyEvents2(){
-	emergencyEvents = [];
-	closeEmergencyPopup();
-	// Add aircraft to map	
-	let nextFlightId = flights.length;
 	flights.push(emergencyFlightES2);
-	
 	// add clearanceEvents here with correct flightid
 	// comment out for now Matt T 26/9
-	//clearanceEvents.set(nextFlightId,[emergencyClearanceEventES2]);
-   	emergencyEvents.push(emergencyEvent2);   	
+	clearanceEvents.set(nextFlightId1,[emergencyClearanceEventES1]);
+   	emergencyEvents.push(emergencyEvent1);
+   	emergencyEvents.push(emergencyEvent2);
+
+   	
 }
 
 function DivertToAirport(flightid, airport){
@@ -187,6 +177,7 @@ function createEmergencyPopup(event){
     			 ClearDirectRouteProbe();
     			 let airport = document.getElementById('divertAirports').value;
         		 DivertToAirport(emergencyFlightId,airport);
+        		 closeEmergencyPopup();
     };
     testCell.appendChild(testbut);
     divertToRow.appendChild(testCell);
