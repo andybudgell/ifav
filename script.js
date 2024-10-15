@@ -7,7 +7,7 @@ var rctx;
 var map;
 var maxFlights = 30;
 var hookedFlight = -999;
-var showrouteflightshape = -1;
+var showrouteflightid = -1;
 var vrtTimeHorizonMins = 30.0;
 var vrtScaleMins = 1.0;
 var numTimes = vrtTimeHorizonMins/vrtScaleMins;
@@ -79,7 +79,17 @@ let testflights = [
 {callsign: "TAL124", startTime: "09:05:00", ifl: 250, initSpeed: 320,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
 {callsign: "RYR321", startTime: "09:06:00", ifl: 250, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
 {callsign: "EIN73", startTime: "09:05:00", ifl: 250, initSpeed: 300,fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"}]},
-
+{callsign: "EZY689",startTime: "09:05:00",ifl: 220,initSpeed: 350,fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
+{callsign: "DAL779",startTime: "09:10:00",ifl: 230,initSpeed: 350,fixroute: routes[0]},		  
+{callsign: "BAW125",startTime: "09:10:00",ifl: 230,initSpeed: 250,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"}]},
+{callsign: "RYR211",startTime: "09:10:00", ifl: 230, initSpeed: 200,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
+{callsign: "AAL12",startTime: "09:12:00", ifl: 240, initSpeed: 300, fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
+{callsign: "AAL22", startTime: "09:13:00", ifl: 240, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
+{callsign: "TAL323", startTime: "09:10:00", ifl: 240, initSpeed: 400, fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
+{callsign: "DAL53", startTime: "09:11:00", ifl: 240, initSpeed: 350,fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
+{callsign: "TAL125", startTime: "09:10:00", ifl: 260, initSpeed: 320,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
+{callsign: "RYR322", startTime: "09:11:00", ifl: 220, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
+{callsign: "EIN74", startTime: "09:10:00", ifl: 210, initSpeed: 370,fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"}]}
 				  ];		  
 let testflights1 = [
 {callsign: "TAL321", startTime: "09:00:00", ifl: 150, initSpeed: 300,fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
@@ -184,7 +194,7 @@ function GenerateRandomFlights()
 flights = JSON.parse(JSON.stringify(testflights));
 var centre = {lat: 51.7, lng: -1.0};
 // Array to store radar TDB shapes
-var TDBShapes = [];		
+var TDBShapes = new Map();		
 var VRTInteractionShapes = [];
 var VRTLevelShapes = [];
 var VRTTimeShapes = [];
@@ -847,7 +857,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
  			if (event.detail.button == 2)
  			{
  				// hide route
- 				//showrouteflightshape = -1; 				
+ 				showrouteflightid = -1; 				
  			}
  			// left button up is hook/unhook
  			else if (event.detail.button = 0)
@@ -860,26 +870,28 @@ document.addEventListener('DOMContentLoaded', (event) => {
         // Event listeners for mousedown events
     	radarCanvas.addEventListener('radarMouseDown', (event) => {
 	        const rect = radarCanvas.getBoundingClientRect();
-	        var len = TDBShapes.length;
-			for (let i=0; i < len; i++)
-			{	    
+
+			let keys = Array.from(TDBShapes.keys());
+			for (k = 0; k < keys.length; k++)
+			{	
+	        						
 			    const x = event.detail.clientX - rect.left;
 		        const y = event.detail.clientY - rect.top;
-				var w = TDBShapes[i].width;
-				var h = TDBShapes[i].height;
-	        	if (x >= (TDBShapes[i].x) && x <= (TDBShapes[i].x + w) && 
-	        		y >= (TDBShapes[i].y) && y <= (TDBShapes[i].y + h)) {	
+				var w = TDBShapes.get(keys[k]).width;
+				var h = TDBShapes.get(keys[k]).height;
+	        	if (x >= (TDBShapes.get(keys[k]).x) && x <= (TDBShapes.get(keys[k]).x + w) && 
+	        		y >= (TDBShapes.get(keys[k]).y) && y <= (TDBShapes.get(keys[k]).y + h)) {	
 	        		if (event.detail.button == 2)
 	        		{	        		
-	   				    showrouteflightshape = i;
-					    drawRoute(TDBShapes[i]);
-					    setTimeout(()=>{showrouteflightshape = -1;},6000);
-					    return;
-					    
+	   				    showrouteflightid = keys[k];
+					    drawRoute(keys[k]);
+					    setTimeout(()=>{showrouteflightid = -1;},6000);
+					    return;					    
 					}
 					if (event.detail.button == 0)
 					{					
-				    	HookFlight(TDBShapes[i].flightid);
+				    	HookFlight(keys[k]);
+				    	return;
 				    }
 		        }
 		    }
@@ -916,9 +928,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	        		y >= (VRTInteractionShapes[i].shapeY-h) && y <= (VRTInteractionShapes[i].shapeY + h)) {	
 	        		if (event.button == 2)
 	        		{	        		
-	   				    showrouteflightshape = i;
-					    drawRoute(VRTInteractionShapes[i]);
-					    setTimeout(()=>{showrouteflightshape = -1;},5000);
+	   				    showrouteflightid = i;
+					    drawRoute(VRTInteractionShapes[i].flightid);
+					    setTimeout(()=>{showrouteflightid = -1;},5000);
 					    return;
 					    
 					}					
@@ -1083,6 +1095,8 @@ function HookFlight(flightid){
 
    	label = document.getElementById('tdilabel');
    	label.textContent = "  "+getRandomNumber(20,60);
+   	drawTracks(radarCanvas);
+
 }  
 
 // Map a point (lat, lon) to canvas coordinates
@@ -1146,7 +1160,7 @@ function drawArrow(context, startX, startY, bearing, length, offset) {
 }
 function drawTracks(Canvas)
 {
-	    	TDBShapes = [];
+	    	TDBShapes.clear();
     	    var thisctx = Canvas.getContext('2d');
 
     	    thisctx.clearRect(0, 0, Canvas.width, Canvas.height); // Clear radar
@@ -1283,7 +1297,7 @@ function drawTracks(Canvas)
 		   			}
 
 	   				// store the shape
-	   				TDBShapes.push({flightid: f, x: p1.x, y: p1.y-11, width: tdbWidth , height: height, colour: 'rgb(30,30,30,90)', nextpoint: 1});
+	   				TDBShapes.set(f,{x: p1.x, y: p1.y-11, width: tdbWidth , height: height, colour: 'rgb(30,30,30,90)', nextpoint: 1});
 	   			}
 	   			}
 	   		}	    				
@@ -1429,9 +1443,9 @@ function updateTracksAndTrajectories()
 	    // move tracks
     	drawTracks(radarCanvas);
     	
-		if (showrouteflightshape != -1)
+		if (showrouteflightid != -1)
 		{
-    		drawRoute(TDBShapes[showrouteflightshape]);
+    		drawRoute(showrouteflightid);
     	}
 		if (hookedFlight >= 0)
 		{
@@ -1448,46 +1462,50 @@ function updateTracksAndTrajectories()
 			}
 		}
 		showInteractionVectors();
-
 		
+		if (emergencyFlightId != -1){
+			drawRoute(emergencyFlightId);
+		}		
     }
     
-function drawRoute(shapeObj) {
-//        const centerX = shapeObj.x + shapeObj.width / 2;
-//        const centerY = shapeObj.y + shapeObj.height / 2;    
-        const centerX = shapeObj.x;
-        const centerY = shapeObj.y;
+function drawRoute(flightid) {
+
+	if (TDBShapes.has(flightid)){
+		
+        const centerX = TDBShapes.get(flightid).x;
+        const centerY = TDBShapes.get(flightid).y;
 		let colour = 'white';
-		if (shapeObj.flightid == emergencyFlightId){
+		if (flightid == emergencyFlightId){
 			colour = 'red';
 		}
         rctx.beginPath();
         rctx.setLineDash([6, 3]); // Create a dotted line pattern
         rctx.moveTo(centerX, centerY);
-        for (let p = shapeObj.nextpoint; p < trajectories[shapeObj.flightid].length; p++)
+        for (let p = TDBShapes.get(flightid).nextpoint; p < trajectories[flightid].length; p++)
         {
-        	var p1 = mapPointToRadarCanvas(radarCanvas, trajectories[shapeObj.flightid][p].coords.lat, trajectories[shapeObj.flightid][p].coords.lng);
+        	var p1 = mapPointToRadarCanvas(radarCanvas, trajectories[flightid][p].coords.lat, trajectories[flightid][p].coords.lng);
         	rctx.lineTo(p1.x, p1.y);
    			rctx.lineWidth=1;			
    	        rctx.strokeStyle = colour;
    	        rctx.fillStyle = colour;
         	rctx.stroke();
         	// Draw dot on the 2d route to indicate where the level clearances are
-        	if (trajectories[shapeObj.flightid][p].name != "TOC" &&
-        		trajectories[shapeObj.flightid][p].name != "BOC"){
-        		rctx.fillText(trajectories[shapeObj.flightid][p].name, p1.x-10,p1.y);
+        	if (trajectories[flightid][p].name != "TOC" &&
+        		trajectories[flightid][p].name != "BOC"){
+        		rctx.fillText(trajectories[flightid][p].name, p1.x-10,p1.y);
 	        	rctx.stroke();
 	        }
-	        else if (trajectories[shapeObj.flightid][p].name == "TOC")
+	        else if (trajectories[flightid][p].name == "TOC")
 	        {
 	        	rctx.strokeStyle = 'rgba(70,195,215,255)';
 	        	drawVrtAnchor(rctx,p1.x,p1.y,7,'rgba(70,195,215,255)');		
 	        }
         }        
-     }  
-     function RemoveShowRoute(){
-		 showrouteflightshape = -1;
-	 }	  		
+	}
+}  
+function RemoveShowRoute(){
+	showrouteflightid = -1;
+}	  		
 // Function to update the clock
 function updateClock() {
 	if (bPlay){                        
@@ -1535,18 +1553,6 @@ function refreshVrt(Can)
 }
 function drawVrt(Can)
 {
-		//if (hookedFlight >= 0)
-//		{
-//  			var currentNearestWholeLevel = Math.round(trajectories[hookedFlight][0].level/10)*10;
-//  			vrtMaxLevel = currentNearestWholeLevel+80;
-//  			vrtMinLevel = currentNearestWholeLevel-80;
-//  			if (vrtMinLevel < 0)
-//  			{
-//	  			vrtMinLevel=0;
-//	  		}
-//  		}
-//		vrtMinLevel=180;
-//		vrtMaxLevel=330;
         const tctx = Can.getContext('2d');
         tctx.clearRect(0, 0, Can.width, Can.height); // Clear vrt
 
@@ -1580,7 +1586,6 @@ function drawVrt(Can)
     	tctx.strokeStyle = '#2b4952';
     	tctx.lineWidth=1;
 
-
     	// draw horizontal level lines
 		const numhlines = (vrtMaxLevel-vrtMinLevel)/vrtGraduation;
 		// calculate offset
@@ -1593,7 +1598,6 @@ function drawVrt(Can)
 			tctx.moveTo(0,ycoord);
 			tctx.lineTo(Can.width,ycoord);
 			tctx.stroke()
-							//tctx.strokeStyle = '#ffffff';
 
 			tctx.fillStyle = '#081920';			
 
@@ -1609,13 +1613,11 @@ function drawVrt(Can)
 			{
 							tctx.lineWidth=1;
 				tctx.fillStyle = '#e0e0e0';
-		        tctx.strokeStyle = '#2b4952';
-		
+		        tctx.strokeStyle = '#2b4952';		
 			}
 
 			tctx.fillText(String(lineno*vrtGraduation+vrtMinLevel),Can.width-25, ycoord-5);
-			VRTLevelShapes.push({shapeX: Can.width-12, shapeY: ycoord-10, width: 25,height:15, level: lineno*vrtGraduation+vrtMinLevel});
-			
+			VRTLevelShapes.push({shapeX: Can.width-12, shapeY: ycoord-10, width: 25,height:15, level: lineno*vrtGraduation+vrtMinLevel});			
     	}    	    	
 }
 function populateVrt(Can)
@@ -2583,7 +2585,7 @@ function Start()
 		flights = JSON.parse(JSON.stringify(testflights));
 		clearanceEvents = deepCopyMap(initClearanceEvents);
 		populateClearanceTable(-1);
-		TDBShapes = [];		
+		TDBShapes.clear();
 		calculateInitialTrackPositions();
 	   	calculateTrajectoriesV2();
 	}
@@ -2593,7 +2595,7 @@ function Start()
 		GenerateRandomFlights();
 		clearanceEvents = new Map();
 		populateClearanceTable(-1);
-		TDBShapes = [];		
+		TDBShapes.clear();
 		calculateInitialTrackPositions();
 	   	calculateTrajectoriesV2();		
 	}
@@ -2607,7 +2609,7 @@ function Start()
 		createEmergencyEvents();
 		
 		populateClearanceTable(-1);
-		TDBShapes = [];		
+		TDBShapes.clear();
 		calculateInitialTrackPositions();
 	   	calculateTrajectoriesV2();
 		emergencyEventsIntervalId = setInterval(pollEmergencyEvents,1000);
@@ -2624,7 +2626,7 @@ function Start()
 		conflictEventsIntervalId = setInterval(pollConflictEvents,1000);
 
 		populateClearanceTable(-1);
-		TDBShapes = [];		
+		TDBShapes.clear();
 		calculateInitialTrackPositions();
 	   	calculateTrajectoriesV2();
 
