@@ -8,7 +8,7 @@ var emergencyFlightES1 =
 				  fixroute:[{name:"KAPEX"},
 				  			{name:"EGBN"}]};
 // simulate steep descent
-var emergencyClearanceEventES1 = {issue_time:"09:00:10",time:"09:20:00",level:20,probe:false};
+var emergencyClearanceEventES1 = {issue_time:"09:00:2",time:"09:20:00",level:20,probe:false};
 
 var emergencyFlightES2 = 
 				{callsign: "ES002", startTime: "09:00:02",ifl: 280,initSpeed: 300,rfl: 0,cfl: 0,					

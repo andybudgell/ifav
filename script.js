@@ -1249,28 +1249,41 @@ function drawTracks(Canvas)
 	   				// Set the fill style (color)
        				thisctx.fillStyle = 'rgb(35,35,35,255)';
        				// Draw the filled rectangle
-	   				thisctx.fillRect(p1.x , p1.y-11, tdbWidth , tdbHeight);
+       				let y = p1.y;
+       				let x = p1.x;
+       				height = tdbHeight;
+	       			if (emergencyFlightId == f){
+						height+=11;
+					}
+		   			thisctx.fillRect(p1.x , p1.y-11, tdbWidth , height);
 	       			drawArrow(thisctx, p1.x+20, p1.y+20, trackPositions[f].bearing,25,40);					       								        						
+
+	       			if (emergencyFlightId == f){
+	   				thisctx.fillStyle = 'rgb(200,0,0,255)';
+		   				thisctx.fillText('7700',x,y);
+		   				y+=11;
+	       			}
 	   				thisctx.fillStyle = 'rgb(0,150,0,255)';
-	   				thisctx.fillText(flights[f].callsign,p1.x, p1.y);
-	   				thisctx.fillText(String("F"+Math.floor(trackPositions[f].level)),p1.x, p1.y+11);
+
+	   				thisctx.fillText(flights[f].callsign,x,y);y+=11;
+	   				thisctx.fillText(String("F"+Math.floor(trackPositions[f].level)),x, y);y+=11;
 	   				
-	   				thisctx.fillText(String(flights[f].fixroute[0].name),p1.x, p1.y+22);
-	   				thisctx.fillText(String(trackPositions[f].rocd),p1.x,p1.y+33);
-	   				thisctx.fillText('G'+String(trackPositions[f].speed),p1.x,p1.y+44);
+	   				thisctx.fillText(String(flights[f].fixroute[0].name),x, y);y+=11;
+	   				thisctx.fillText(String(trackPositions[f].rocd),x,y);y+=11;
+	   				thisctx.fillText('G'+String(trackPositions[f].speed),x,y);y+=11;
 	   				thisctx.fillStyle = 'white';
 					if (clearanceEvents.has(f))
 					{
 						var events = clearanceEvents.get(f);
-		   				thisctx.fillText(String(events.length),p1.x+40,p1.y+44);
+		   				thisctx.fillText(String(events.length),x+40,y);
 		   			}
 		   			else
 		   			{	
-		   				thisctx.fillText('0',p1.x+40,p1.y+44);
+		   				thisctx.fillText('0',x+40,y);
 		   			}
 
 	   				// store the shape
-	   				TDBShapes.push({flightid: f, x: p1.x, y: p1.y-11, width: tdbWidth , height: tdbHeight, colour: 'rgb(30,30,30,90)', nextpoint: 1});
+	   				TDBShapes.push({flightid: f, x: p1.x, y: p1.y-11, width: tdbWidth , height: height, colour: 'rgb(30,30,30,90)', nextpoint: 1});
 	   			}
 	   			}
 	   		}	    				
