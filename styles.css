@@ -66,6 +66,7 @@
             width: 100%;
             background-color: #0A2732; 
             border: 2px solid #808080;
+            margin-top: -2px; /* Gritting teetch */
         }
         .bot-canvas-container {
             height: 5%;
