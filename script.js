@@ -58,33 +58,33 @@ let routes = [
 let testflights = [
 {callsign: "EZY687",startTime: "09:00:00",ifl: 200,initSpeed: 300,fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
 {callsign: "DAL777",startTime: "09:00:00",ifl: 300,initSpeed: 300,fixroute: routes[0]},		  
-{callsign: "BAW123",startTime: "09:00:00",ifl: 220,initSpeed: 300,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"}]},
+{callsign: "BAW123",startTime: "09:00:00",ifl: 200,initSpeed: 300,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"},{name:"REDFA"}]},
 {callsign: "RYR209",startTime: "09:00:00", ifl: 220, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
 {callsign: "AAL10",startTime: "09:02:00", ifl: 200, initSpeed: 300, fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
 {callsign: "AAL20", startTime: "09:04:00", ifl: 220, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
 {callsign: "TAL321", startTime: "09:00:00", ifl: 240, initSpeed: 300, fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
 {callsign: "DAL51", startTime: "09:01:00", ifl: 230, initSpeed: 300,fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
 {callsign: "TAL123", startTime: "09:00:00", ifl: 230, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
-{callsign: "RYR320", startTime: "09:01:00", ifl: 230, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
-{callsign: "EIN72", startTime: "09:00:00", ifl: 230, initSpeed: 300,fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"}]},
+{callsign: "RYR320", startTime: "09:05:00", ifl: 230, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
+{callsign: "EIN72", startTime: "09:00:00", ifl: 230, initSpeed: 300,fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"},{name:"KONAN"}]},
 {callsign: "THA092", startTime: "09:00:00", ifl: 150, initSpeed: 390,fixroute:[{name:"ADLOG"},{name:"BOGNA"},{name:"OTSID"},{name:"HILLY"},{name:"UMBUR"},{name:"EGLL"}]},
 {callsign: "EZY688",startTime: "09:05:00",ifl: 230,initSpeed: 300,fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
 {callsign: "DAL778",startTime: "09:05:00",ifl: 240,initSpeed: 300,fixroute: routes[0]},		  
-{callsign: "BAW124",startTime: "09:05:00",ifl: 240,initSpeed: 250,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"}]},
+{callsign: "BAW124",startTime: "09:05:00",ifl: 240,initSpeed: 250,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"},{name:"REDFA"}]},
 {callsign: "RYR210",startTime: "09:05:00", ifl: 240, initSpeed: 200,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
 {callsign: "AAL11",startTime: "09:07:00", ifl: 250, initSpeed: 300, fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
-{callsign: "AAL21", startTime: "09:08:00", ifl: 250, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
+{callsign: "AAL21", startTime: "09:12:00", ifl: 250, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
 {callsign: "TAL322", startTime: "09:05:00", ifl: 250, initSpeed: 400, fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
 {callsign: "DAL52", startTime: "09:06:00", ifl: 250, initSpeed: 350,fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
 {callsign: "TAL124", startTime: "09:05:00", ifl: 250, initSpeed: 320,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
-{callsign: "RYR321", startTime: "09:06:00", ifl: 250, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
+{callsign: "RYR321", startTime: "09:10:00", ifl: 250, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
 {callsign: "EIN73", startTime: "09:05:00", ifl: 250, initSpeed: 300,fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"}]},
 {callsign: "EZY689",startTime: "09:05:00",ifl: 220,initSpeed: 350,fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
 {callsign: "DAL779",startTime: "09:10:00",ifl: 230,initSpeed: 350,fixroute: routes[0]},		  
 {callsign: "BAW125",startTime: "09:10:00",ifl: 230,initSpeed: 250,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"}]},
 {callsign: "RYR211",startTime: "09:10:00", ifl: 230, initSpeed: 200,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
-{callsign: "AAL12",startTime: "09:12:00", ifl: 240, initSpeed: 300, fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
-{callsign: "AAL22", startTime: "09:13:00", ifl: 240, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
+{callsign: "AAL12",startTime: "09:23:00", ifl: 240, initSpeed: 300, fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
+{callsign: "AAL22", startTime: "09:14:00", ifl: 240, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
 {callsign: "TAL323", startTime: "09:10:00", ifl: 240, initSpeed: 400, fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
 {callsign: "DAL53", startTime: "09:11:00", ifl: 240, initSpeed: 350,fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
 {callsign: "TAL125", startTime: "09:10:00", ifl: 260, initSpeed: 320,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
@@ -122,10 +122,10 @@ flights = JSON.parse(JSON.stringify(testflights));
 var initClearanceEvents= new Map();
 
 initClearanceEvents.set(getFlightId("EZY687"),[{issue_time:"09:01:00",time:"09:02:00",level:210,probe:false},{issue_time:"09:04:00",time:"09:09:00",level: 220,probe:false},{issue_time:"09:13:00",time:"09:15:10",level: 250,probe:false}]);
-initClearanceEvents.set(getFlightId("BAW123"),[{issue_time:"09:05:00",time:"09:07:00",level: 260,probe:false},{issue_time:"09:10:00",time:"09:13:10",level: 250,probe:false},{issue_time:"09:14:00",time:"09:17:00",level:240,probe:false}]);
+initClearanceEvents.set(getFlightId("BAW123"),[{issue_time:"09:13:00",time:"09:27:00",level: 290,probe:false}]);
 initClearanceEvents.set(getFlightId("RYR209"),[{issue_time:"09:05:00",time:"09:07:00",level: 250,probe:false},{issue_time:"09:10:00",time:"09:13:10",level: 300,probe:false},{issue_time:"09:13:30",time:"09:17:00",level:310,probe:false}]);
 initClearanceEvents.set(getFlightId("THA092"),[{issue_time:"09:00:30",time:"09:15:00",level: 10,probe:false}]);
-
+initClearanceEvents.set(getFlightId("EIN72"),[{issue_time:"09:14:00",time:"09:27:00",level: 250,probe:false}]);
 var clearanceEvents = deepCopyMap(initClearanceEvents);
 
 const clearanceEventColours = ['rgb(80,180,25)','rgb(51,111,166)','rgb(230,200,50)','rgb(255,255,0)','rgb(255,0,255)','rgb(0,255,255)'];
@@ -1559,7 +1559,7 @@ function drawVrt(Can)
         //tctx.strokeStyle = '#2b4952';
 		tctx.lineWidth=1;
 		VRTTimeShapes = [];
-
+		tctx.font = "14px Roboto";
         // draw the times
     	for (let lineno = 1; lineno <= numTimes ; lineno++)
     	{  
@@ -1585,7 +1585,7 @@ function drawVrt(Can)
     	tctx.setLineDash([]);
     	tctx.strokeStyle = '#2b4952';
     	tctx.lineWidth=1;
-
+		tctx.font = 20+'px';
     	// draw horizontal level lines
 		const numhlines = (vrtMaxLevel-vrtMinLevel)/vrtGraduation;
 		// calculate offset
@@ -1603,7 +1603,7 @@ function drawVrt(Can)
 
 			tctx.fillRect(Can.width-30,ycoord-25,40,40);
 
-			tctx.font = "12px Roboto";
+			tctx.font = "14px Roboto";
 			if (selectedClearanceLevel != 0 && selectedClearanceLevel== ((lineno)*vrtGraduation)+vrtMinLevel)
 			{
 				//tctx.lineWidth=2;
