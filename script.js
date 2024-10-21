@@ -140,10 +140,10 @@ var clearanceEvents = new Map();
 
 //tamaEastSouthClearanceEvents= new Map();
 function addTamaClearanceEvents(){
-	clearanceEvents.set(getFlightId("ADG11"),[{issue_time:"09:14:00",time:"09:27:00",level: 270,probe:false}]);
-	clearanceEvents.set(getFlightId("LWA21"),[{issue_time:"09:14:00",time:"09:27:00",level: 310,probe:false}]);
-	clearanceEvents.set(getFlightId("MEL31"),[{issue_time:"09:14:00",time:"09:27:00",level: 290,probe:false}]);
-	clearanceEvents.set(getFlightId("ADG41"),[{issue_time:"09:14:00",time:"09:27:00",level: 350,probe:false}]);
+	clearanceEvents.set(getFlightId("ADG11"),[{issue_time:"09:05:00",time:"09:27:00",level: 270,probe:false}]);
+	clearanceEvents.set(getFlightId("LWA21"),[{issue_time:"09:05:00",time:"09:27:00",level: 310,probe:false}]);
+	clearanceEvents.set(getFlightId("MEL31"),[{issue_time:"09:05:00",time:"09:27:00",level: 290,probe:false}]);
+	clearanceEvents.set(getFlightId("ADG41"),[{issue_time:"09:02:00",time:"09:14:00",level: 350,probe:false}]);
 	clearanceEvents.set(getFlightId("LWA61"),[{issue_time:"09:14:00",time:"09:27:00",level: 220,probe:false}]);
 
 }
@@ -1329,12 +1329,12 @@ function drawTracks(Canvas)
 	   				
 	   				thisctx.fillText(String(flights[f].fixroute[0].name),x, y);y+=11;
 	   				thisctx.fillText(String(trackPositions[f].rocd),x,y);y+=11;
-	   				thisctx.fillText('G'+String(trackPositions[f].speed),x,y);y+=11;
+	   				thisctx.fillText('G'+String(trackPositions[f].speed),x,y);;
 	   				thisctx.fillStyle = 'white';
 					if (clearanceEvents.has(f))
 					{
 						var events = clearanceEvents.get(f);
-		   				thisctx.fillText(String(events.length),x+40,y);
+		   				thisctx.fillText(String(events.length),x+37,y);
 		   			}
 		   			else
 		   			{	
@@ -1561,6 +1561,15 @@ function updateClock() {
 	    var timeString = simTime.toLocaleTimeString();
 	    document.getElementById('clock').textContent = timeString+"";
 	}
+}
+function speedx1(){
+	clockStep = 1000;
+}
+function speedx2(){
+	clockStep = 2000;
+}
+function speedx4(){
+	clockStep = 4000;
 }
 function onTick()
 {
