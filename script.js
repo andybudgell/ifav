@@ -13,10 +13,10 @@ var vrtScaleMins = 1.0;
 var numTimes = vrtTimeHorizonMins/vrtScaleMins;
 var vrtCurrentPosOffset = 5;
 var vrtMaxLevel = 330;
-var vrtMaxMaxLevel = 330;
+var vrtMaxMaxLevel = 400;
 var vrtMinLevel = 180;
 var vrtMinMinLevel = 0;
-
+var clockStep = 1000;
 var vrtGraduation = 10;
 var bSetClearanceIssueTime = true;
 var selectedClearanceIssueTime = 0;
@@ -49,10 +49,14 @@ var flights = [{callsign: "BAW123", fixroute:[{name:"BUCFA",level:200},{name:"NE
 			   {callsign: "EIN138", fixroute:[{name:"TELBA",level:260},{name:"WELIN",level:290},{name:"KEMPY",level:320}]}];
 
 let routes = [
- 			 [{name:"EDFAR"},
- 			  {name: "BETPO"},
-  			  {name:"ITVIP"}
-			 ]
+ 			 [{name:"EDFAR"},{name: "BETPO"},{name:"ITVIP"}],
+			 [{name:"LANON"},{name: "EMKUK"},{name:"IDESI"}],
+			 [{name:"UNFIT"},{name: "SOPIT"},{name:"IDESI"}],
+			 [{name:"BAGIT"},{name: "DIGUT"},{name:"ROTNO"}],
+			 [{name:"NUGRA"},{name: "SILVA"},{name:"NETVU"}],
+			 [{name:"LONAN"},{name: "HEMEL"},{name:"KORXA"},{name:"EGSY"}],
+			 [{name:"UNDUG"},{name: "BETPO"},{name:"EGCB"}]
+
 			 ];
 
 let testflights = [
@@ -88,14 +92,25 @@ let testflights = [
 {callsign: "TAL323", startTime: "09:10:00", ifl: 240, initSpeed: 400, fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
 {callsign: "DAL53", startTime: "09:11:00", ifl: 240, initSpeed: 350,fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
 {callsign: "TAL125", startTime: "09:10:00", ifl: 260, initSpeed: 320,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
-{callsign: "RYR322", startTime: "09:11:00", ifl: 220, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
+{callsign: "RYR322", startTime: "09:14:00", ifl: 220, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
 {callsign: "EIN74", startTime: "09:10:00", ifl: 210, initSpeed: 370,fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"}]}
 				  ];		  
 let testflights1 = [
 {callsign: "TAL321", startTime: "09:00:00", ifl: 150, initSpeed: 300,fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
 {callsign: "TAL123", startTime: "09:00:00", ifl: 150, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]}
 ];	
-							  
+					  
+let tamaEastSouthFlights = [
+{callsign: "ADG11", startTime: "09:00:00", ifl: 330, initSpeed: 300,fixroute:routes[1]},
+{callsign: "LWA21", startTime: "09:00:00", ifl: 310, initSpeed: 300,fixroute:routes[2]},
+{callsign: "MEL31", startTime: "09:00:00", ifl: 310, initSpeed: 300,fixroute:routes[3]},
+{callsign: "ADG41", startTime: "09:00:00", ifl: 250, initSpeed: 300,fixroute:routes[4]}
+];
+
+
+let tamaWestNorthFlights = [
+{callsign: "MEL51", startTime: "09:00:00", ifl: 340, initSpeed: 300,fixroute:routes[5]},
+{callsign: "LWA61", startTime: "09:00:00", ifl: 340, initSpeed: 300,fixroute:routes[6]}];
 
 
 function deepCopyMap(originalMap) {
@@ -116,17 +131,32 @@ function getFlightId(callsign){
 	}
 	return flightId;
 }	
-flights = JSON.parse(JSON.stringify(testflights));
 					  
 // map of flight->clearance events
 var initClearanceEvents= new Map();
 
-initClearanceEvents.set(getFlightId("EZY687"),[{issue_time:"09:01:00",time:"09:02:00",level:210,probe:false},{issue_time:"09:04:00",time:"09:09:00",level: 220,probe:false},{issue_time:"09:13:00",time:"09:15:10",level: 250,probe:false}]);
-initClearanceEvents.set(getFlightId("BAW123"),[{issue_time:"09:13:00",time:"09:27:00",level: 290,probe:false}]);
-initClearanceEvents.set(getFlightId("RYR209"),[{issue_time:"09:05:00",time:"09:07:00",level: 250,probe:false},{issue_time:"09:10:00",time:"09:13:10",level: 300,probe:false},{issue_time:"09:13:30",time:"09:17:00",level:310,probe:false}]);
-initClearanceEvents.set(getFlightId("THA092"),[{issue_time:"09:00:30",time:"09:15:00",level: 10,probe:false}]);
-initClearanceEvents.set(getFlightId("EIN72"),[{issue_time:"09:14:00",time:"09:27:00",level: 250,probe:false}]);
-var clearanceEvents = deepCopyMap(initClearanceEvents);
+
+var clearanceEvents = new Map();
+
+//tamaEastSouthClearanceEvents= new Map();
+function addTamaClearanceEvents(){
+	clearanceEvents.set(getFlightId("ADG11"),[{issue_time:"09:14:00",time:"09:27:00",level: 270,probe:false}]);
+	clearanceEvents.set(getFlightId("LWA21"),[{issue_time:"09:14:00",time:"09:27:00",level: 310,probe:false}]);
+	clearanceEvents.set(getFlightId("MEL31"),[{issue_time:"09:14:00",time:"09:27:00",level: 290,probe:false}]);
+	clearanceEvents.set(getFlightId("ADG41"),[{issue_time:"09:14:00",time:"09:27:00",level: 350,probe:false}]);
+	clearanceEvents.set(getFlightId("LWA61"),[{issue_time:"09:14:00",time:"09:27:00",level: 220,probe:false}]);
+
+}
+function initEvents(){
+	initClearanceEvents.set(getFlightId("EZY687"),[{issue_time:"09:01:00",time:"09:02:00",level:210,probe:false},{issue_time:"09:04:00",time:"09:09:00",level: 220,probe:false},{issue_time:"09:13:00",time:"09:15:10",level: 250,probe:false}]);
+	initClearanceEvents.set(getFlightId("BAW123"),[{issue_time:"09:13:00",time:"09:27:00",level: 290,probe:false}]);
+	initClearanceEvents.set(getFlightId("RYR209"),[{issue_time:"09:05:00",time:"09:07:00",level: 250,probe:false},{issue_time:"09:10:00",time:"09:13:10",level: 300,probe:false},{issue_time:"09:13:30",time:"09:17:00",level:310,probe:false}]);
+	initClearanceEvents.set(getFlightId("THA092"),[{issue_time:"09:00:30",time:"09:15:00",level: 10,probe:false}]);
+	initClearanceEvents.set(getFlightId("EIN72"),[{issue_time:"09:14:00",time:"09:27:00",level: 250,probe:false}]);
+
+	clearanceEvents = deepCopyMap(initClearanceEvents);
+	addTamaClearanceEvents();
+}
 
 const clearanceEventColours = ['rgb(80,180,25)','rgb(51,111,166)','rgb(230,200,50)','rgb(255,255,0)','rgb(255,0,255)','rgb(0,255,255)'];
 var scenario;
@@ -191,7 +221,22 @@ function GenerateRandomFlights()
 		}	
 	}
 }
-flights = JSON.parse(JSON.stringify(testflights));
+
+// Initialise flights object with 
+function initFlights(){
+	flights = [];
+	testflights = testflights.concat(tamaEastSouthFlights);
+	testflights = testflights.concat(tamaWestNorthFlights);
+	flights = JSON.parse(JSON.stringify(testflights));
+}
+function initData(){
+	initFlights();
+	initEvents();
+}
+initData();
+
+
+
 var centre = {lat: 51.7, lng: -1.0};
 // Array to store radar TDB shapes
 var TDBShapes = new Map();		
@@ -1509,8 +1554,8 @@ function RemoveShowRoute(){
 // Function to update the clock
 function updateClock() {
 	if (bPlay){                        
-	    var diff = 2000;
-		simTime = new Date(simTime.getTime() + diff);
+	    
+		simTime = new Date(simTime.getTime() + clockStep);
             
 	    // Format and update the clock display
 	    var timeString = simTime.toLocaleTimeString();
@@ -2582,7 +2627,7 @@ function Start()
 	mode = document.getElementById('mode').value;
 	if (mode == "CCD"){
 		simTime = setTimeFromString(simTime, nineOclock);
-		flights = JSON.parse(JSON.stringify(testflights));
+		initFlights();
 		clearanceEvents = deepCopyMap(initClearanceEvents);
 		populateClearanceTable(-1);
 		TDBShapes.clear();
@@ -2603,7 +2648,7 @@ function Start()
 	{
 		// reset the clock and add the default flights and clearance events
 		simTime = setTimeFromString(simTime, nineOclock);
-		flights = JSON.parse(JSON.stringify(testflights));
+		initFlights();
 		clearanceEvents = deepCopyMap(initClearanceEvents);
 		// Setup emergency events and aircraft
 		createEmergencyEvents();
@@ -2620,7 +2665,7 @@ function Start()
 	else if (mode == "ECD"){
 	// reset the clock and add the default flights and clearance events
 		simTime = setTimeFromString(simTime, nineOclock);
-		flights = JSON.parse(JSON.stringify(testflights));
+		initFlights();
 		// Setup emergency events and aircraft
 		createConflictEvents();
 		conflictEventsIntervalId = setInterval(pollConflictEvents,1000);

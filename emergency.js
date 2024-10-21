@@ -1,6 +1,6 @@
 
 var emergencyEvents = new Array();
-var emergencyEvent1 = {time: "09:00:02",callsign: "ES001",type: "SMOKE IN COCKPIT", nearestAirport: "EGLL", suggestedAirports: ["EGLL","EGGD","EGHF"],route: ["OCK","EGLL"]};
+var emergencyEvent1 = {time: "09:01:02",callsign: "ES001",type: "SMOKE IN COCKPIT", nearestAirport: "EGLL", suggestedAirports: ["EGLL","EGGD","EGHF"],route: ["OCK","EGLL"]};
 var emergencyEvent2 = {time: "09:05:02",callsign: "ES002",type: "UNKNOWN HARDWARE FAILURE", nearestAirport: "EGBN", suggestedAirports: ["EGLL","EGGD","EGHF"],route: ["OCK","EGLL"]};
 
 var emergencyFlightES1 = 

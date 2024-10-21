@@ -358,8 +358,11 @@ table #emergencyTable{
 #actionsTable {	
 	table-layout: fixed;
 	position: relative;
-	top: 100px;
-	height: 130px;	
+	top: 120px;
+	height: 60px;	
+}
+#actionsTable td,tr{
+	height:20px !important;
 }
 
 table#emergencyTable tr{

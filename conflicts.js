@@ -2,9 +2,9 @@ var interactionVectors = new Array();
 
 // In this scenario two aircraft are both in conflict with the same aircraft
 var conflictEvents = new Array();
+var conflictEvent1 = {time: "09:02:10",ac1: "EIN72",ac2: "BAW123",ac3: "TAL123",suggestion: 2};
 var conflictEvent2 = {time: "09:05:10",ac1: "TAL321",ac2: "EZY687",ac3: "RYR209",suggestion: 3};
-var conflictEvent1 = {time: "09:00:10",ac1: "EIN72",ac2: "BAW123",ac3: "TAL123",suggestion: 2};
-
+var conflictEvent2 = {time: "09:08:10",ac1: "TAL321",ac2: "EZY687",ac3: "RYR209",suggestion: 3};
 function createConflictEvents(){
 	conflictEvents.push(conflictEvent1);
 	conflictEvents.push(conflictEvent2);
@@ -174,14 +174,16 @@ if (popupInteractionDetails.length > 1 || force == true)
 				 }		  			
 
 			}
-				
+			action1.colSpan = 3;	
 			actionsRow.appendChild(action1);
-		    		    
+			actionsTable.appendChild(actionsRow);
+			
+   			let buttonRow = document.createElement('tr');									    
 		    previewCell.appendChild(previewbut);
-	    	actionsRow.appendChild(previewCell);
+	    	buttonRow.appendChild(previewCell);
 	    	enterCell.appendChild(enterbut);
-	    	actionsRow.appendChild(enterCell);
-   			actionsTable.appendChild(actionsRow);
+	    	buttonRow.appendChild(enterCell);   			
+   			actionsTable.appendChild(buttonRow);
 			conflictPopup.appendChild(actionsTable);	
 
 		}
