@@ -83,7 +83,7 @@ let testflights = [
 {callsign: "TAL124", startTime: "09:05:00", ifl: 250, initSpeed: 320,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
 {callsign: "RYR321", startTime: "09:10:00", ifl: 250, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
 {callsign: "EIN73", startTime: "09:05:00", ifl: 250, initSpeed: 300,fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"}]},
-{callsign: "EZY689",startTime: "09:05:00",ifl: 220,initSpeed: 350,fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
+{callsign: "EZY689",startTime: "09:09:00",ifl: 220,initSpeed: 350,fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
 {callsign: "DAL779",startTime: "09:10:00",ifl: 230,initSpeed: 350,fixroute: routes[0]},		  
 {callsign: "BAW125",startTime: "09:10:00",ifl: 230,initSpeed: 250,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"}]},
 {callsign: "RYR211",startTime: "09:10:00", ifl: 230, initSpeed: 200,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
@@ -688,6 +688,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		}
     }
     }).addTo(map);
+	 // Add scale
+    L.control.scale().addTo(map);
 
 		// Function to style the point feature
         function pointToLayer(feature, latlng) {
@@ -738,6 +740,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }); // Bind a popup to each feature
         }
     }
+   
 });        
 		// Function to style the point feature
         function airportToLayer(feature, latlng) {
@@ -1216,7 +1219,7 @@ function drawTracks(Canvas)
     			if ( simTime.getTime() >= trackPositions[f].time.getTime())
     			{			
     			var p1 = mapPointToRadarCanvas(Canvas, trackPositions[f].coords.lat, trackPositions[f].coords.lng);								
-				
+
 				// Don't draw if negative value as it means its off the screen
 				if (p1.x > 0 && p1.y > 0 && p1.x < Canvas.width && p1.y < Canvas.height){    				
 	    			
@@ -1328,7 +1331,13 @@ function drawTracks(Canvas)
 	   				thisctx.fillText(String("F"+Math.floor(trackPositions[f].level)),x, y);y+=11;
 	   				
 	   				thisctx.fillText(String(flights[f].fixroute[0].name),x, y);y+=11;
-	   				thisctx.fillText(String(trackPositions[f].rocd),x,y);y+=11;
+					let rocd = trackPositions[f].rocd;					
+					let strRocd = String(rocd);
+					if (rocd > 0){
+						strRocd= "+" + strRocd;
+					}
+					
+	   				thisctx.fillText(strRocd,x,y);y+=11;
 	   				thisctx.fillText('G'+String(trackPositions[f].speed),x,y);;
 	   				thisctx.fillStyle = 'white';
 					if (clearanceEvents.has(f))

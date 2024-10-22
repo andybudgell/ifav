@@ -2,12 +2,13 @@ var interactionVectors = new Array();
 
 // In this scenario two aircraft are both in conflict with the same aircraft
 var conflictEvents = new Array();
-var conflictEvent1 = {time: "09:02:10",ac1: "EIN72",ac2: "BAW123",ac3: "TAL123",suggestion: 2};
-var conflictEvent2 = {time: "09:05:10",ac1: "TAL321",ac2: "EZY687",ac3: "RYR209",suggestion: 3};
-var conflictEvent2 = {time: "09:08:10",ac1: "TAL321",ac2: "EZY687",ac3: "RYR209",suggestion: 3};
+var conflictEvent1 = {time: "09:02:10",ac1: "EIN72",ac2: "BAW123",ac3: "TAL123",suggestion: 2, times: ["9:14:20","9:20:15"]};
+var conflictEvent2 = {time: "09:05:10",ac1: "TAL321",ac2: "RYR320",ac3: "TAL124",suggestion: 3, times: ["9:14:27","9:20:35"]};
+var conflictEvent3 = {time: "09:08:10",ac1: "BAW124",ac2: "DAL53",ac3: "DAL52",suggestion: 0, times: ["9:16:10","9:18:24"]};
 function createConflictEvents(){
 	conflictEvents.push(conflictEvent1);
 	conflictEvents.push(conflictEvent2);
+	conflictEvents.push(conflictEvent3);
 }
 
 function pollConflictEvents(){
@@ -21,13 +22,13 @@ function pollConflictEvents(){
 															  ac2: getFlightId(conflictEvents[e].ac2), 
 															  distance: 1.8,
 															  suggestion: conflictEvents[e].suggestion,
-															  time: "09:10:20" });
+															  time: conflictEvents[e].times[0]});
 			popupInteractionDetails.push({flightid : getFlightId(conflictEvents[e].ac1),
 															  ac1: getFlightId(conflictEvents[e].ac1), 
 															  ac2: getFlightId(conflictEvents[e].ac3), 
 															  distance: 1.3,
 															  suggestion: conflictEvents[e].suggestion,
-															  time: "09:09:20" });
+															  time: conflictEvents[e].times[1] });
 
 
 			populatePopup(true);
@@ -338,6 +339,7 @@ const conflictPopup = document.createElement('div');
 
 function closeConflictPopup(){
 	document.getElementById('cf').style.display='none';
+	removeProbeEvent();
 	interactionVectors = [];
 	popupInteractionDetails = [];
 
