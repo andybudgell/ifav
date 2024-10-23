@@ -64,7 +64,6 @@ let testflights = [
 {callsign: "DAL777",startTime: "09:00:00",ifl: 300,initSpeed: 300,fixroute: routes[0]},		  
 {callsign: "BAW123",startTime: "09:00:00",ifl: 200,initSpeed: 300,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"},{name:"REDFA"}]},
 {callsign: "RYR209",startTime: "09:00:00", ifl: 220, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
-{callsign: "AAL10",startTime: "09:02:00", ifl: 200, initSpeed: 300, fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
 {callsign: "AAL20", startTime: "09:04:00", ifl: 220, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
 {callsign: "TAL321", startTime: "09:00:00", ifl: 240, initSpeed: 300, fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
 {callsign: "DAL51", startTime: "09:01:00", ifl: 230, initSpeed: 300,fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
@@ -76,7 +75,6 @@ let testflights = [
 {callsign: "DAL778",startTime: "09:05:00",ifl: 240,initSpeed: 300,fixroute: routes[0]},		  
 {callsign: "BAW124",startTime: "09:05:00",ifl: 240,initSpeed: 250,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"},{name:"REDFA"}]},
 {callsign: "RYR210",startTime: "09:05:00", ifl: 240, initSpeed: 200,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
-{callsign: "AAL11",startTime: "09:07:00", ifl: 250, initSpeed: 300, fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
 {callsign: "AAL21", startTime: "09:12:00", ifl: 250, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
 {callsign: "TAL322", startTime: "09:05:00", ifl: 250, initSpeed: 400, fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
 {callsign: "DAL52", startTime: "09:06:00", ifl: 250, initSpeed: 350,fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
@@ -87,7 +85,6 @@ let testflights = [
 {callsign: "DAL779",startTime: "09:10:00",ifl: 230,initSpeed: 350,fixroute: routes[0]},		  
 {callsign: "BAW125",startTime: "09:10:00",ifl: 230,initSpeed: 250,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"}]},
 {callsign: "RYR211",startTime: "09:10:00", ifl: 230, initSpeed: 200,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
-{callsign: "AAL12",startTime: "09:23:00", ifl: 240, initSpeed: 300, fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
 {callsign: "AAL22", startTime: "09:14:00", ifl: 240, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
 {callsign: "TAL323", startTime: "09:10:00", ifl: 240, initSpeed: 400, fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
 {callsign: "DAL53", startTime: "09:11:00", ifl: 240, initSpeed: 350,fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
@@ -771,6 +768,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	 
         // Disable the map tiles
 		var mapLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', { attribution: '&copy; Stamen Design', maxZoom:20, minZoom:6.5 });
+	    //var mapLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}.png', { attribution: '&copy; Stamen Design', maxZoom:20, minZoom:6.5 });
+
 		// Define base layers (for layer control, optional)
 	    var baseLayers = {
 	    };
