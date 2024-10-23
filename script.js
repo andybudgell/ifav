@@ -2645,7 +2645,7 @@ function Start()
 	mode = document.getElementById('mode').value;
 	if (mode == "CCD"){
 		simTime = setTimeFromString(simTime, nineOclock);
-		initFlights();
+		initData();
 		clearanceEvents = deepCopyMap(initClearanceEvents);
 		populateClearanceTable(-1);
 		TDBShapes.clear();
@@ -2666,7 +2666,7 @@ function Start()
 	{
 		// reset the clock and add the default flights and clearance events
 		simTime = setTimeFromString(simTime, nineOclock);
-		initFlights();
+		initData();
 		clearanceEvents = deepCopyMap(initClearanceEvents);
 		// Setup emergency events and aircraft
 		createEmergencyEvents();
@@ -2683,7 +2683,7 @@ function Start()
 	else if (mode == "ECD"){
 	// reset the clock and add the default flights and clearance events
 		simTime = setTimeFromString(simTime, nineOclock);
-		initFlights();
+		initData();
 		// Setup emergency events and aircraft
 		createConflictEvents();
 		conflictEventsIntervalId = setInterval(pollConflictEvents,1000);
@@ -2798,4 +2798,14 @@ function ClearDirectRouteProbe(){
 	directRouteFix = "";
 	bDirectRouteProbe = false;
 	calculateTrajectoriesV2();
+}
+
+function fullscreen(){
+if (window.innerHeight === screen.height) {
+    console.log('The browser is in fullscreen mode');
+    document.exitFullscreen();
+} else {
+    console.log('The browser is NOT in fullscreen mode');
+    document.documentElement.requestFullscreen();
+}
 }
