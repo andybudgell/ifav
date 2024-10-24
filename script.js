@@ -61,7 +61,7 @@ let routes = [
 
 let testflights = [
 {callsign: "EZY687",startTime: "09:00:00",ifl: 200,initSpeed: 300,fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
-{callsign: "DAL777",startTime: "09:00:00",ifl: 300,initSpeed: 300,fixroute: routes[0]},		  
+{callsign: "DAL777",startTime: "09:00:00",ifl: 300,initSpeed: 400,fixroute: routes[0]},		  
 {callsign: "BAW123",startTime: "09:00:00",ifl: 200,initSpeed: 300,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"},{name:"REDFA"}]},
 {callsign: "RYR209",startTime: "09:00:00", ifl: 220, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
 {callsign: "AAL20", startTime: "09:04:00", ifl: 220, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
@@ -150,6 +150,8 @@ function initEvents(){
 	initClearanceEvents.set(getFlightId("RYR209"),[{issue_time:"09:05:00",time:"09:07:00",level: 250,probe:false},{issue_time:"09:10:00",time:"09:13:10",level: 300,probe:false},{issue_time:"09:13:30",time:"09:17:00",level:310,probe:false}]);
 	initClearanceEvents.set(getFlightId("THA092"),[{issue_time:"09:00:30",time:"09:15:00",level: 10,probe:false}]);
 	initClearanceEvents.set(getFlightId("EIN72"),[{issue_time:"09:14:00",time:"09:27:00",level: 250,probe:false}]);
+	initClearanceEvents.set(getFlightId("DAL777"),[{issue_time:"09:02:00",time:"09:10:00",level: 320,probe:false}]);
+
 
 	clearanceEvents = deepCopyMap(initClearanceEvents);
 	addTamaClearanceEvents();
