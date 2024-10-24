@@ -25,7 +25,7 @@ var selectedClearanceLevel = 0;
 var selectedHeading = 0;
 var selectedSpeed = 0;
 var trackPositions= [];
-var tdbWidth = 45;
+var tdbWidth = 60;
 var tdbHeight = 60;
 // Store headings/speeds
 var flightHeadingClearances = new Map();
@@ -1327,8 +1327,14 @@ function drawTracks(Canvas)
 	   				thisctx.fillStyle = 'rgb(0,150,0,255)';
 
 	   				thisctx.fillText(flights[f].callsign,x,y);y+=11;
-	   				thisctx.fillText(String("F"+Math.floor(trackPositions[f].level)),x, y);y+=11;
-	   				
+	   				thisctx.fillText(String("F"+Math.floor(trackPositions[f].level)),x, y);
+	   				let currentNearestWholeLevel = Math.round(trackPositions[f].level/10)*10+20;
+	   				thisctx.fillStyle = 'cyan';
+
+	   				thisctx.fillText(String(""+currentNearestWholeLevel),x+35, y);y+=11;
+	   						   				thisctx.fillStyle = 'rgb(0,150,0,255)';
+
+
 	   				thisctx.fillText(String(flights[f].fixroute[0].name),x, y);y+=11;
 					let rocd = trackPositions[f].rocd;					
 					let strRocd = String(rocd);
