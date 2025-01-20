@@ -25,6 +25,7 @@ var selectedClearanceLevel = 0;
 var selectedHeading = 0;
 var selectedSpeed = 0;
 var trackPositions= [];
+var trailDotPositions = [];
 var tdbWidth = 60;
 var tdbHeight = 60;
 // Store headings/speeds
@@ -35,19 +36,14 @@ var flightSpeedProbeClearances = new Map();
 var bDirectRouteProbe = false;
 var directRouteFix = "";
 var directRouteFlight = -1;
-
+var bIssueTimeSort = true
 var originalHeading;
 var originalSpeed;
-
+var bShowTdbRangeVectors = false;
+var tdbAngles = [];
 var flightSpeedClearances = new Map();
-
-var flights = [{callsign: "BAW123", fixroute:[{name:"BUCFA",level:200},{name:"NEDEX",level:250},{name:"HEMEL",level:300}]},
-			   {callsign: "RYR209", fixroute:[{name:"TEWXI",level:280},{name:"ELVOS",level:240},{name:"CHASE",level:220}]},
-			   {callsign: "KLM20",  fixroute:[{name:"ELEZE",level:150},{name:"BETAX", level:180},{name:"AMVEL",level:250}]},
-			   {callsign: "EZY687", fixroute:[{name:"AMVEL",level:200},{name:"BETAX",level:230},{name:"BRUMI",level:300}]},
-			   {callsign: "BAW007", fixroute:[{name:"BIFIN",level:250},{name:"UMBAG",level:290}]},
-			   {callsign: "EIN138", fixroute:[{name:"TELBA",level:260},{name:"WELIN",level:290},{name:"KEMPY",level:320}]}];
-
+var mouseDown = false;
+var flights;
 let routes = [
  			 [{name:"EDFAR"},{name: "BETPO"},{name:"ITVIP"}],
 			 [{name:"LANON"},{name: "EMKUK"},{name:"IDESI"}],
@@ -60,54 +56,54 @@ let routes = [
 			 ];
 
 let testflights = [
-{callsign: "EZY687",startTime: "09:00:00",ifl: 200,initSpeed: 300,fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
-{callsign: "DAL777",startTime: "09:00:00",ifl: 300,initSpeed: 400,fixroute: routes[0]},		  
-{callsign: "BAW123",startTime: "09:00:00",ifl: 200,initSpeed: 300,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"},{name:"REDFA"}]},
-{callsign: "RYR209",startTime: "09:00:00", ifl: 220, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
-{callsign: "AAL20", startTime: "09:04:00", ifl: 220, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
-{callsign: "TAL321", startTime: "09:00:00", ifl: 240, initSpeed: 300, fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
-{callsign: "DAL51", startTime: "09:01:00", ifl: 230, initSpeed: 300,fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
-{callsign: "TAL123", startTime: "09:00:00", ifl: 230, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
-{callsign: "RYR320", startTime: "09:05:00", ifl: 230, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
-{callsign: "EIN72", startTime: "09:00:00", ifl: 230, initSpeed: 300,fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"},{name:"KONAN"}]},
-{callsign: "THA092", startTime: "09:00:00", ifl: 150, initSpeed: 390,fixroute:[{name:"ADLOG"},{name:"BOGNA"},{name:"OTSID"},{name:"HILLY"},{name:"UMBUR"},{name:"EGLL"}]},
-{callsign: "EZY688",startTime: "09:05:00",ifl: 230,initSpeed: 300,fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
-{callsign: "DAL778",startTime: "09:05:00",ifl: 240,initSpeed: 300,fixroute: routes[0]},		  
-{callsign: "BAW124",startTime: "09:05:00",ifl: 240,initSpeed: 250,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"},{name:"REDFA"}]},
-{callsign: "RYR210",startTime: "09:05:00", ifl: 240, initSpeed: 200,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
-{callsign: "AAL21", startTime: "09:12:00", ifl: 250, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
-{callsign: "TAL322", startTime: "09:05:00", ifl: 250, initSpeed: 400, fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
-{callsign: "DAL52", startTime: "09:06:00", ifl: 250, initSpeed: 350,fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
-{callsign: "TAL124", startTime: "09:05:00", ifl: 250, initSpeed: 320,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
-{callsign: "RYR321", startTime: "09:10:00", ifl: 250, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
-{callsign: "EIN73", startTime: "09:05:00", ifl: 250, initSpeed: 300,fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"}]},
-{callsign: "EZY689",startTime: "09:09:00",ifl: 220,initSpeed: 350,fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
-{callsign: "DAL779",startTime: "09:10:00",ifl: 230,initSpeed: 350,fixroute: routes[0]},		  
-{callsign: "BAW125",startTime: "09:10:00",ifl: 230,initSpeed: 250,fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"}]},
-{callsign: "RYR211",startTime: "09:10:00", ifl: 230, initSpeed: 200,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
-{callsign: "AAL22", startTime: "09:14:00", ifl: 240, initSpeed: 300,fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
-{callsign: "TAL323", startTime: "09:10:00", ifl: 240, initSpeed: 400, fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
-{callsign: "DAL53", startTime: "09:11:00", ifl: 240, initSpeed: 350,fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
-{callsign: "TAL125", startTime: "09:10:00", ifl: 260, initSpeed: 320,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
-{callsign: "RYR322", startTime: "09:14:00", ifl: 220, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
-{callsign: "EIN74", startTime: "09:10:00", ifl: 210, initSpeed: 370,fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"}]}
+{callsign: "EZY687",startTime: "09:00:00",ifl: 200,initSpeed: 300,exitCode:"IC",fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
+{callsign: "DAL777",startTime: "09:00:00",ifl: 300,initSpeed: 400,exitCode:"IC",fixroute: routes[0]},		  
+{callsign: "BAW123",startTime: "09:00:00",ifl: 200,initSpeed: 300,exitCode:"IC",fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"},{name:"REDFA"}]},
+{callsign: "RYR209",startTime: "09:00:00", ifl: 220, initSpeed: 300,exitCode:"IC",fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
+{callsign: "AAL20", startTime: "09:04:00", ifl: 220, initSpeed: 300,exitCode:"IC",fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
+{callsign: "TAL321", startTime: "09:00:00", ifl: 240, initSpeed: 300,exitCode:"IC", fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
+{callsign: "DAL51", startTime: "09:01:00", ifl: 230, initSpeed: 300,exitCode:"IC",fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
+{callsign: "TAL123", startTime: "09:00:00", ifl: 230, initSpeed: 300,exitCode:"IC",fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
+{callsign: "RYR320", startTime: "09:05:00", ifl: 230, initSpeed: 300,exitCode:"IC",fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
+{callsign: "EIN72", startTime: "09:00:00", ifl: 230, initSpeed: 300,exitCode:"IC",fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"},{name:"KONAN"}]},
+{callsign: "THA092", startTime: "09:00:00", ifl: 150, initSpeed: 390,exitCode:"IC",fixroute:[{name:"ADLOG"},{name:"BOGNA"},{name:"OTSID"},{name:"HILLY"},{name:"UMBUR"},{name:"EGLL"}]},
+{callsign: "EZY688",startTime: "09:05:00",ifl: 230,initSpeed: 300,exitCode:"IC",fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
+{callsign: "DAL778",startTime: "09:05:00",ifl: 240,initSpeed: 300,exitCode:"IC",fixroute: routes[0]},		  
+{callsign: "BAW124",startTime: "09:05:00",ifl: 240,initSpeed: 250,exitCode:"IC",fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"},{name:"REDFA"}]},
+{callsign: "RYR210",startTime: "09:05:00", ifl: 240, initSpeed: 200,exitCode:"IC",fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
+{callsign: "AAL21", startTime: "09:12:00", ifl: 250, initSpeed: 300,exitCode:"IC",fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
+{callsign: "TAL322", startTime: "09:05:00", ifl: 250, initSpeed: 400,exitCode:"IC", fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
+{callsign: "DAL52", startTime: "09:06:00", ifl: 250, initSpeed: 350,exitCode:"IC",fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
+{callsign: "TAL124", startTime: "09:05:00", ifl: 250, initSpeed: 320,exitCode:"IC",fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
+{callsign: "RYR321", startTime: "09:10:00", ifl: 250, initSpeed: 300,exitCode:"IC",fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
+{callsign: "EIN73", startTime: "09:05:00", ifl: 250, initSpeed: 300,exitCode:"IC",fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"}]},
+{callsign: "EZY689",startTime: "09:09:00",ifl: 220,initSpeed: 350,exitCode:"IC",fixroute:[{name:"DUCNO"},{name:"BUGUP"},{name:"KIDLI"},{name:"UMLAT"},{name:"TANET"},{name:"VABIK"}]},
+{callsign: "DAL779",startTime: "09:10:00",ifl: 230,initSpeed: 350,exitCode:"IC",fixroute: routes[0]},		  
+{callsign: "BAW125",startTime: "09:10:00",ifl: 230,initSpeed: 250,exitCode:"IC",fixroute:[{name:"BUCFA"},{name:"DIGUT"},{name:"HEMEL"},{name:"LOFFO"}]},
+{callsign: "RYR211",startTime: "09:10:00", ifl: 230, initSpeed: 200,exitCode:"IC",fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"},{name:"GODOS"}]},
+{callsign: "AAL22", startTime: "09:14:00", ifl: 240, initSpeed: 300,exitCode:"IC",fixroute:[{name:"HAWFA"},{name:"DONNA"},{name:"ADMIS"},{name:"KEMPY"}]},
+{callsign: "TAL323", startTime: "09:10:00", ifl: 240, initSpeed: 400,exitCode:"IC", fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
+{callsign: "DAL53", startTime: "09:11:00", ifl: 240, initSpeed: 350,exitCode:"IC",fixroute:[{name:"EMKAD"},{name:"SILVA"},{name:"FITBO"}]},
+{callsign: "TAL125", startTime: "09:10:00", ifl: 260, initSpeed: 320,exitCode:"IC",fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
+{callsign: "RYR322", startTime: "09:14:00", ifl: 220, initSpeed: 300,exitCode:"IC",fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]},
+{callsign: "EIN74", startTime: "09:10:00", ifl: 210, initSpeed: 370,exitCode:"IC",fixroute:[{name:"ELEZE"},{name:"SAPCO"},{name:"VELAG"},{name:"EDCOX"},{name:"BRAIN"}]}
 				  ];		  
 let testflights1 = [
-{callsign: "TAL321", startTime: "09:00:00", ifl: 150, initSpeed: 300,fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
-{callsign: "TAL123", startTime: "09:00:00", ifl: 150, initSpeed: 300,fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]}
+{callsign: "TAL321", startTime: "09:00:00", ifl: 150, initSpeed: 300,exitCode:"IC",fixroute:[{name:"FITBO"},{name:"WOBUN"},{name:"TABIS"},{name:"LOGAN"}]},
+{callsign: "TAL123", startTime: "09:00:00", ifl: 150, initSpeed: 300,exitCode:"IC",fixroute:[{name:"LOGAN"},{name:"TABIS"},{name:"WOBUN"},{name:"FITBO"}]}
 ];	
 					  
 let tamaEastSouthFlights = [
-{callsign: "ADG11", startTime: "09:00:00", ifl: 330, initSpeed: 300,fixroute:routes[1]},
-{callsign: "LWA21", startTime: "09:00:00", ifl: 310, initSpeed: 300,fixroute:routes[2]},
-{callsign: "MEL31", startTime: "09:00:00", ifl: 310, initSpeed: 300,fixroute:routes[3]},
-{callsign: "ADG41", startTime: "09:00:00", ifl: 250, initSpeed: 300,fixroute:routes[4]}
+{callsign: "ADG11", startTime: "09:00:00", ifl: 330, initSpeed: 300,exitCode:"IC",fixroute:routes[1]},
+{callsign: "LWA21", startTime: "09:00:00", ifl: 310, initSpeed: 300,exitCode:"IC",fixroute:routes[2]},
+{callsign: "MEL31", startTime: "09:00:00", ifl: 310, initSpeed: 300,exitCode:"IC",fixroute:routes[3]},
+{callsign: "ADG41", startTime: "09:00:00", ifl: 250, initSpeed: 300,exitCode:"IC",fixroute:routes[4]}
 ];
 
 
 let tamaWestNorthFlights = [
-{callsign: "MEL51", startTime: "09:00:00", ifl: 340, initSpeed: 300,fixroute:routes[5]},
-{callsign: "LWA61", startTime: "09:00:00", ifl: 340, initSpeed: 300,fixroute:routes[6]}];
+{callsign: "MEL51", startTime: "09:00:00", ifl: 340, initSpeed: 300,exitCode:"IC",fixroute:routes[5]},
+{callsign: "LWA61", startTime: "09:00:00", ifl: 340, initSpeed: 300,exitCode:"IC",fixroute:routes[6]}];
 
 
 function deepCopyMap(originalMap) {
@@ -254,16 +250,30 @@ function drawVrtAnchor(ctx, x, y, radius, color) {
     ctx.fill(); // Fill the circle
     ctx.stroke();
 }
-function drawTriangle(ctx,x,y,color) {
- ctx.beginPath();
- ctx.fillStyle=color;
- ctx.moveTo(x+6, y);
- ctx.lineTo(x-6,y+6);
- ctx.lineTo(x-6,y-6);
- ctx.closePath();
- ctx.fill();
-}
+ function drawTriangle(ctx, x, y, size, angle, fillColour) {
+    // Convert the angle to radians
+    const radians = ((angle-90) * Math.PI) / 180;
+    // Calculate the triangle's vertices based on the rotation
+    const x1 = x + size * Math.cos(radians);            // Top vertex X
+    const y1 = y + size * Math.sin(radians);            // Top vertex Y
 
+    const x2 = x + size * Math.cos(radians + Math.PI * 2 / 3); // Bottom-left vertex X
+    const y2 = y + size * Math.sin(radians + Math.PI * 2 / 3); // Bottom-left vertex Y
+
+    const x3 = x + size * Math.cos(radians - Math.PI * 2 / 3); // Bottom-right vertex X
+    const y3 = y + size * Math.sin(radians - Math.PI * 2 / 3); // Bottom-right vertex Y
+
+    // Draw the triangle
+    ctx.beginPath();
+    ctx.moveTo(x1, y1); // Move to the top vertex
+    ctx.lineTo(x2, y2); // Line to the bottom-left vertex
+    ctx.lineTo(x3, y3); // Line to the bottom-right vertex
+    ctx.closePath();
+
+    // Fill the triangle
+    ctx.fillStyle = fillColour;
+    ctx.fill();
+}
 function isPointInCircle(px, py, x, y, r) {
     // Calculate the squared distance between the point and the circle's center
     const distanceSquared = (px - x) * (px - x) + (py - y) * (py - y);
@@ -661,8 +671,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     				   zoomSnap:0.5, 
     				   zoomAnimation: false,
     				   doubleClickZoom: false }).setView([centre.lat,centre.lng], 9);
-    //map.dragging.disable();
-	//L.geoJSON(coastlinesData, style = {"color": "#90a090"}).addTo(map);
 		
     // Add sectors data to the map
     L.geoJSON(sectorData, {
@@ -897,11 +905,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 });           
                 radarCanvas.dispatchEvent(customEvent);        
         });
+        
+        map.on("mousemove",function(event){
+        	console.log("Mouse move:",mouseDown);
+        	
+        });
 
         
         radarCanvas.addEventListener('radarMouseUp', (event) => {
  			const rect = radarCanvas.getBoundingClientRect();
- 			
+			mouseDown = false;
  			// right click is the route display button
  			if (event.detail.button == 2)
  			{
@@ -913,13 +926,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
  			{
  				
  			}
- 			//alert(event.detail.button);
  		});	
 
         // Event listeners for mousedown events
     	radarCanvas.addEventListener('radarMouseDown', (event) => {
 	        const rect = radarCanvas.getBoundingClientRect();
-
+			mouseDown = true;
 			let keys = Array.from(TDBShapes.keys());
 			for (k = 0; k < keys.length; k++)
 			{	
@@ -1063,27 +1075,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         toprightCanvas.addEventListener('contextmenu',function(event) {
 	       	event.preventDefault();
 	    });
-	    
-	    const switchElement = document.getElementById('allEventsSwitch');
-		switchElement.style.backgroundColor = '#0A2732';
-		switchElement.style.color = '#a0a0a0';
-		switchElement.style.width=80;
-		this.innerHTML = "Show All";
-    	switchElement.addEventListener('click', function() {
-        if (bShowAllEvents) {
-			bShowAllEvents = false;			
-			this.innerHTML = "Show All";
-        } else {
-    			this.innerHTML = "Show Hooked";
-			bShowAllEvents = true;
-        }
-		populateClearanceTable(hookedFlight);
-    });
-     
-     
-	    
-    
-	
+	    	              	        	
 		// STARTUP CALLS
     	logBounds();
     	calculateInitialTrackPositions();
@@ -1091,7 +1083,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     	
 
     	onTickIntervalId = setInterval(onTick, 1000);
-    	updateDataIntervalId = setInterval(updateData,1000);
+    	updateDataIntervalId = setInterval(updateData,2000);
     	updateClock();
     	//insertLevelInstruction(1, 150, 2);
 		createClearanceTable();
@@ -1172,7 +1164,25 @@ function mapPointToRadarCanvas(can, lat, lon) {
         };
     }
 // Function to draw an arrow on the canvas
-function drawArrow(context, startX, startY, bearing, length, offset) {
+function drawRangeVector(context, startX, startY, bearing, lengthNm, offset) {
+ 	function calculateArrowLengthInPixels(distanceInNm) {
+	  const EARTH_CIRCUMFERENCE = 40075016.686; // Earth's circumference in meters
+	  const TILE_SIZE = 256; // Tile size in pixels
+	  const METERS_PER_NM = 1852; // 1 nautical mile in meters
+
+	  // Convert distance to meters
+	  const distanceInMeters = distanceInNm * METERS_PER_NM;
+
+	  // Calculate resolution (meters per pixel)
+	  const resolution = EARTH_CIRCUMFERENCE / (TILE_SIZE * Math.pow(2, map.getZoom()));
+
+	  // Calculate the length in pixels
+	  const arrowLengthInPixels = distanceInMeters / resolution;
+
+  	  return arrowLengthInPixels;
+	}    
+    let length = calculateArrowLengthInPixels(lengthNm);
+
     // Convert the bearing to radians
     let angle = degreesToRadians(bearing-90);
 
@@ -1183,35 +1193,63 @@ function drawArrow(context, startX, startY, bearing, length, offset) {
     let endY = offsetStartY + length * Math.sin(angle);
     // Draw the main line of the arrow
     context.beginPath();
-	context.strokeStyle = 'green';
+	context.strokeStyle = '#a0a0a0';
 	context.setLineDash([]);
-
+	context.lineWidth=2;
     context.moveTo(offsetStartX, offsetStartY);
     context.lineTo(endX, endY);
     context.stroke();
 
     // Draw the arrowhead (two lines to form a V)
-    let arrowAngle = Math.PI / 6;  // Arrowhead angle (30 degrees)
-    let arrowLength = 5;  // Length of the arrowhead lines
+    let arrowAngle = Math.PI / 2;  // Arrowhead angle (30 degrees)
+    let arrowLength = 7;  // Length of the arrowhead lines
 
     // Left side of the arrowhead
     let leftX = endX - arrowLength * Math.cos(angle - arrowAngle);
     let leftY = endY - arrowLength * Math.sin(angle - arrowAngle);
-    context.moveTo(endX, endY);
-    context.lineTo(leftX, leftY);
+    //context.moveTo(endX, endY);
+    //context.lineTo(leftX, leftY);
 
     // Right side of the arrowhead
     let rightX = endX - arrowLength * Math.cos(angle + arrowAngle);
     let rightY = endY - arrowLength * Math.sin(angle + arrowAngle);
-    context.lineTo(endX, endY);
-    context.lineTo(rightX, rightY);
+    //context.lineTo(endX, endY);
+    //context.lineTo(rightX, rightY);
+    //context.stroke();
+    
+    context.beginPath();
+    context.moveTo(rightX,rightY);
+    context.lineTo(leftX,leftY);
     context.stroke();
+}
+
+function drawStrut(context, startX, startY, endX, endY){
+	 context.beginPath();
+	context.strokeStyle = 'green';
+	context.setLineDash([]);
+
+    context.moveTo(startX, startY);
+    context.lineTo(endX, endY);
+    context.stroke();
+}
+function drawTrailDots(Canvas,context,f){
+	
+	if (trailDotPositions[f] != undefined){
+		let radius = 1;	
+			for (let d=0; d < trailDotPositions[f].length; d++){
+			var p = mapPointToRadarCanvas(Canvas, trailDotPositions[f][d].lat, trailDotPositions[f][d].lng);											
+			context.beginPath();
+			context.arc(p.x, p.y, radius, 0, Math.PI * 2); // Circle for the dot
+		    context.fillStyle = 'white'; // Fill color
+		    context.fill(); // Fill the circle
+		    context.closePath();	
+		}
+	}
 }
 function drawTracks(Canvas)
 {
 	    	TDBShapes.clear();
     	    var thisctx = Canvas.getContext('2d');
-
     	    thisctx.clearRect(0, 0, Canvas.width, Canvas.height); // Clear radar
 
     		// for each flight
@@ -1222,14 +1260,25 @@ function drawTracks(Canvas)
     			var p1 = mapPointToRadarCanvas(Canvas, trackPositions[f].coords.lat, trackPositions[f].coords.lng);								
 
 				// Don't draw if negative value as it means its off the screen
-				if (p1.x > 0 && p1.y > 0 && p1.x < Canvas.width && p1.y < Canvas.height){    				
+				if (p1.x > 0 && p1.y > 0 && p1.x < Canvas.width && p1.y < Canvas.height){
+					thisctx.moveTo(p1.x, p1.y)
+		    		
+		    		if (tdbAngles[f] == undefined){
+		    			tdbAngles[f] = 90;
+		    		}
+		    		const tdbAngleRadians = (tdbAngles[f] * Math.PI) / 180;
+					let tdbCentreX = p1.x+(80*Math.sin(tdbAngleRadians ));
+					let tdbCentreY = p1.y-(80*Math.cos(tdbAngleRadians ));
+
+	    			let tdbX = tdbCentreX-(tdbWidth/2);
+	    			let tdbY = tdbCentreY-(tdbHeight/2);	    			
 	    			
 					if (hookedFlight == f){
 	       				// Optionally, you can also draw a rectangle outline
 	       				thisctx.setLineDash([]);
 	        			thisctx.strokeStyle = 'white';
 	        			thisctx.lineWidth = 2;
-	        			thisctx.strokeRect(p1.x , p1.y-11, tdbWidth+1, tdbHeight)
+	        			thisctx.strokeRect(tdbX,tdbY, tdbWidth+1, tdbHeight)
 	       			}
 	       			if (emergencyFlightId == f){
 	       			  	// Function to create a hatching pattern
@@ -1264,7 +1313,7 @@ function drawTracks(Canvas)
 	       				thisctx.setLineDash([]);
 	        			thisctx.strokeStyle = 'red';
 	        			thisctx.lineWidth = 2;
-	        			thisctx.strokeRect(p1.x , p1.y-11, tdbWidth, tdbHeight)
+	        			thisctx.strokeRect(tdbX , tdbY, tdbWidth, tdbHeight)
 	        			// Also draw a hatched area around the TDB in the direction
 	        			thisctx.beginPath();
 	        			thisctx.setLineDash([]);
@@ -1305,22 +1354,30 @@ function drawTracks(Canvas)
 						thisctx.closePath();
 						thisctx.fill();
 						
-	        			thisctx.moveTo(p1.x, p1.y);
+	        			thisctx.moveTo(tdbX, tdbY);
 
 	       			}
 	       			
-	   				// Set the fill style (color)
+	   				
+		   			
+					
+					if (bShowTdbRangeVectors){
+		       			drawRangeVector(thisctx, p1.x, p1.y, trackPositions[f].bearing,5,0);					       								        						
+		       		}
+		       		drawStrut(thisctx,p1.x,p1.y,tdbCentreX, tdbCentreY);
+					drawTrailDots(Canvas,thisctx,f);
+					// This is the track symbol
+		   			drawTriangle(thisctx,p1.x,p1.y,10,trackPositions[f].bearing,"green");
+					// Set the fill style (color)
        				thisctx.fillStyle = 'rgb(35,35,35,255)';
        				// Draw the filled rectangle
-       				let y = p1.y;
-       				let x = p1.x;
+       				let y = tdbY+10;
+       				let x = tdbX;
        				height = tdbHeight;
 	       			if (emergencyFlightId == f){
 						height+=11;
 					}
-		   			thisctx.fillRect(p1.x , p1.y-11, tdbWidth , height);
-	       			drawArrow(thisctx, p1.x+20, p1.y+20, trackPositions[f].bearing,25,40);					       								        						
-
+		   			thisctx.fillRect(tdbX, tdbY, tdbWidth , height);
 	       			if (emergencyFlightId == f){
 	   				thisctx.fillStyle = 'rgb(200,0,0,255)';
 		   				thisctx.fillText('7700',x,y);
@@ -1331,13 +1388,15 @@ function drawTracks(Canvas)
 	   				thisctx.fillText(flights[f].callsign,x,y);y+=11;
 	   				thisctx.fillText(String("F"+Math.floor(trackPositions[f].level)),x, y);
 	   				let currentNearestWholeLevel = Math.round(trackPositions[f].level/10)*10+20;
+	   				
+	   				// XFL
+	   				let bl = getLevelAtBoundary(f);
 	   				thisctx.fillStyle = 'cyan';
-
 	   				thisctx.fillText(String(""+currentNearestWholeLevel),x+35, y);y+=11;
-	   						   				thisctx.fillStyle = 'rgb(0,150,0,255)';
+	   				thisctx.fillStyle = 'rgb(0,150,0,255)';
 
 
-	   				thisctx.fillText(String(flights[f].fixroute[0].name),x, y);y+=11;
+	   				thisctx.fillText(String(flights[f].exitCode),x, y);y+=11;
 					let rocd = trackPositions[f].rocd;					
 					let strRocd = String(rocd);
 					if (rocd > 0){
@@ -1354,11 +1413,11 @@ function drawTracks(Canvas)
 		   			}
 		   			else
 		   			{	
-		   				thisctx.fillText('0',x+40,y);
+		   				//thisctx.fillText('0',x+40,y);
 		   			}
 
 	   				// store the shape
-	   				TDBShapes.set(f,{x: p1.x, y: p1.y-11, width: tdbWidth , height: height, colour: 'rgb(30,30,30,90)', nextpoint: 1});
+	   				TDBShapes.set(f,{x: tdbX, y: tdbY, width: tdbWidth , height: height, colour: 'rgb(30,30,30,90)', nextpoint: 1});
 	   			}
 	   			}
 	   		}	    				
@@ -1501,9 +1560,15 @@ function updateTracksAndTrajectories()
 	    updateTracksAndTrajectories();
    		probeTrajectories();
 
-	    // move tracks
-    	drawTracks(radarCanvas);
-    	
+    	if (bPlay){
+			
+	    	drawTracks(radarCanvas);
+	    	// update trail dot positions
+	    	updateTrailDotData();
+		    // move tracks
+
+		}
+		
 		if (showrouteflightid != -1)
 		{
     		drawRoute(showrouteflightid);
@@ -1526,9 +1591,27 @@ function updateTracksAndTrajectories()
 		
 		if (emergencyFlightId != -1){
 			drawRoute(emergencyFlightId);
-		}		
+		}
+		
+		
     }
-    
+function updateTrailDotData(){
+		for (let f=0; f < trackPositions.length; f++){
+			if (trailDotPositions.length == 0 || trailDotPositions[f] == undefined){
+				trailDotPositions[f] = [{lat: trackPositions[f].coords.lat, lng: trackPositions[f].coords.lng}]
+			}else{
+
+				if (trailDotPositions[f].length <= 10){
+					trailDotPositions[f].unshift({lat: trackPositions[f].coords.lat, lng: trackPositions[f].coords.lng})
+				}
+				if (trailDotPositions[f].length == 11){
+					trailDotPositions[f].pop();
+				}
+			}
+			
+		}
+	
+}
 function drawRoute(flightid) {
 
 	if (TDBShapes.has(flightid)){
@@ -1740,7 +1823,7 @@ function populateVrt(Can)
     		// pixels from origin (y zero pos = top of canvas)
     		vrtTrackYpos = Canheight-((currentLevel-vrtMinLevel)/(vrtMaxLevel-vrtMinLevel)*Canheight);
     		// draw current pos dot on first line
-    		drawTriangle(tctx,vrtCurrentPosOffset,vrtTrackYpos,'#b0b0b0');
+    		drawTriangle(tctx,vrtCurrentPosOffset,vrtTrackYpos,12,90,'#b0b0b0');
     		tctx.beginPath();
     		tctx.moveTo(vrtCurrentPosOffset ,vrtTrackYpos );
     		var pointLevel = 0;
@@ -2442,13 +2525,8 @@ function playpause(){
 	}else{
 		but.textContent = "Pause";
 		bPlay = true;
-	}
-	
-    //updateDataIntervalId = setInterval(updateData,1000);
-   	//clearInterval(updateDataIntervalId);
+	}	
 }
-
-
 
 function updateProbeEvent()
 {
@@ -2525,24 +2603,50 @@ function getSortedClearanceEvents(){
 	sorted.sort(function(a,b)
 		{
 			var ATime = new Date();
-			ATime = setTimeFromString(ATime, a.time);
+			if (bIssueTimeSort){			
+				ATime = setTimeFromString(ATime, a.issue_time);
+			}else{
+				ATime = setTimeFromString(ATime, a.time);
+			}
 			var BTime = new Date();
-			BTime = setTimeFromString(BTime, b.time);
+			if (bIssueTimeSort){
+				BTime = setTimeFromString(BTime, b.issue_time);
+			}else{
+				BTime = setTimeFromString(BTime, b.time);
+			}
 			return ATime.getTime() - BTime.getTime();
 		});
 	return sorted;
 }
 
+function sortByChanged(newValue){
+	if (newValue == "IT"){
+		bIssueTimeSort= true;
+	}else{
+		bIssueTimeSort= false;
+	}
+	populateClearanceTable(hookedFlight);	
+}
+function showChanged(newValue){
+	if (newValue == "A"){
+		bShowAllEvents = true;
+	}else{
+		bShowAllEvents = false;
+	}
+	populateClearanceTable(hookedFlight);	
+}
+
 function getSector(flightid, pos)
 {
-	var position = latLonToXY(pos.lng, pos.lat);
+	var position = latLonToXY(pos.lng, pos.lat);	
+	
 	var sector = -1;
 	for (let s = 0; s < sectorData.features.length; s++)
 	{
 		var coords = sectorData.features[s].geometry.coordinates;
 		var vertices = coords[0];
 		
-		var bInside = isPointInPolygon([position.x,position.y],vertices);
+		var bInside = isPointInPolygon([position.y,position.x],vertices);
 		if (bInside)
 		{
 			sector = s;
@@ -2703,7 +2807,7 @@ function Start()
 	}
 
 	onTickIntervalId = setInterval(onTick,1000);
-    updateDataIntervalId = setInterval(updateData,1000);
+    updateDataIntervalId = setInterval(updateData,2000);
 
 }
 
@@ -2808,11 +2912,76 @@ function ClearDirectRouteProbe(){
 }
 
 function fullscreen(){
-if (window.innerHeight === screen.height) {
-    console.log('The browser is in fullscreen mode');
-    document.exitFullscreen();
-} else {
-    console.log('The browser is NOT in fullscreen mode');
-    document.documentElement.requestFullscreen();
+	if (window.innerHeight === screen.height) {
+	    console.log('The browser is in fullscreen mode');
+	    document.exitFullscreen();
+	} else {
+	    console.log('The browser is NOT in fullscreen mode');
+	    document.documentElement.requestFullscreen();
+	}
 }
+function calculateIntersection(p1, q1, p2, q2) {
+    // Line p1q1 represented as a1*x + b1*y = c1
+    const a1 = q1.y - p1.y;
+    const b1 = p1.x - q1.x;
+    const c1 = a1 * p1.x + b1 * p1.y;
+
+    // Line p2q2 represented as a2*x + b2*y = c2
+    const a2 = q2.y - p2.y;
+    const b2 = p2.x - q2.x;
+    const c2 = a2 * p2.x + b2 * p2.y;
+
+    const determinant = a1 * b2 - a2 * b1;
+
+    if (determinant === 0) {
+        // The lines are parallel, no intersection
+        return null;
+    } else {
+        const x = (b2 * c1 - b1 * c2) / determinant;
+        const y = (a1 * c2 - a2 * c1) / determinant;
+        return { x, y };
+    }
+}
+function getLevelAtBoundary(flightid){
+
+	// currently we only have 2 sectors so find the two points where it transitions from 1 to the other
+	var p1 = latLonToXY(50.6922, -1.0278);
+	var p2 = latLonToXY(52.889, -1.2775);
+
+	point3 = -1;
+	point4 = -1;
+	let cS = -1;
+	for (let p=0; p < trajectories[flightid].length; p++){
+		// assing cS if unassigned and a valids sector
+		let pS = trajectories[flightid][p].sector;
+		if (pS != -1 && cS == -1){
+			cS = pS;
+			point3 = p;
+		}else if (cS != -1 && pS != -1 && cS != pS){
+			point4 = p;
+			break;
+		}
+	}
+	
+	if (point3 != -1 && point4 != -1){
+		let p3 = latLongToXY(trajectories[flightid][point3].coords);
+		let p4 = latLongToXY(trajectories[flightid][point4].coords);
+		intersectPoint = calculateIntersection(p1,p2,p3,p4);
+	}
+	return 10;								
+}
+
+function TdbVectorsChanged(){
+
+	bShowTdbRangeVectors = document.getElementById("tdbVectors").checked;
+	drawTracks();
+}
+
+function RotateTDB(){
+	if (hookedFlight >= 0){
+		tdbAngles[hookedFlight] = tdbAngles[hookedFlight ]+45;
+		if (tdbAngles[hookedFlight ]>= 360){
+			tdbAngles[hookedFlight ]= tdbAngles[hookedFlight]-360;
+		}
+	}
 }

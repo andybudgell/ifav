@@ -32,7 +32,15 @@
 					<label class="switch">
 					  <input id="auto" type="checkbox" onchange='AutoDetectionChanged()'>
 					  <span class="slider"></span>
-					</label>					</td> 		
+					</label>
+					<label>5Nm TDB Vectors</label>
+					<label class="switch">
+					  <input id="tdbVectors" type="checkbox" onchange='TdbVectorsChanged()'>
+					  <span class="slider"></span>
+					</label>
+					<label>TDB Position</label>
+					<button onclick="RotateTDB()">Rotate Hooked</button>
+					</td> 		
  					<td width="100" class="custom-label" id="clock">09:00:00</td>
 					<td width="80">
 			    		<div class="buttons">
@@ -64,10 +72,29 @@
             </td>
         </tr>
         <tr>
-            <td class="clearance-table-cell" width="40%" height='50%' valign="top" align="center">
-			 <div class="clearance-entry-container"></div>			 
-			<button id="allEventsSwitch">Show All</button>
-
+            <td class="clearance-table-cell" width="40%" height='40%' valign="top" align="center">
+			 <div class="clearance-entry-container"></div>
+			 <div class="controls">
+			 <table class="controls-table">
+    			<tr>
+    			<td>
+				<label>Show</label>
+				<select name="show" id="show" onchange="showChanged(this.value)">
+					<option value="H">Hooked</option>
+					<option value="A">All</option>
+				</select>
+				</td>            
+				<td>
+				<label>Sort By</label>
+				<select name="sortBy" id="sortBy" onchange="sortByChanged(this.value)">
+					<option value="IT">Issue Time</option>
+					<option value="TT">Target Time</option>
+				</select>
+				</td>
+				</tr>
+			</table>
+				
+			</div>	 
              <div class="clearance-table-container"></div>
             </td>
         </tr>
