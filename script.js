@@ -1387,10 +1387,11 @@ function drawTracks(Canvas)
 
 	   				thisctx.fillText(flights[f].callsign,x,y);y+=11;
 	   				thisctx.fillText(String("F"+Math.floor(trackPositions[f].level)),x, y);
-	   				let currentNearestWholeLevel = Math.round(trackPositions[f].level/10)*10+20;
 	   				
 	   				// XFL
-	   				let bl = getLevelAtBoundary(f);
+	   				let xfl = getLevelAtBoundary(f);
+		   			let currentNearestWholeLevel = Math.round(xfl/10)*10;
+
 	   				thisctx.fillStyle = 'cyan';
 	   				thisctx.fillText(String(""+currentNearestWholeLevel),x+35, y);y+=11;
 	   				thisctx.fillStyle = 'rgb(0,150,0,255)';
@@ -2638,7 +2639,7 @@ function showChanged(newValue){
 
 function getSector(flightid, pos)
 {
-	var position = latLonToXY(pos.lng, pos.lat);	
+	var position = latLonToXY(pos.lat, pos.lng);	
 	
 	var sector = -1;
 	for (let s = 0; s < sectorData.features.length; s++)
@@ -2646,7 +2647,7 @@ function getSector(flightid, pos)
 		var coords = sectorData.features[s].geometry.coordinates;
 		var vertices = coords[0];
 		
-		var bInside = isPointInPolygon([position.y,position.x],vertices);
+		var bInside = isPointInPolygon([position.x,position.y],vertices);
 		if (bInside)
 		{
 			sector = s;
@@ -2660,14 +2661,15 @@ function isPointInPolygon(point, polygon) {
     const [x, y] = point;
     let isInside = false;
 
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    for (let i = 0;  i < polygon.length-1; i++) {
+    	let j = i+1;
         var XYpoint = latLonToXY(polygon[i][1],polygon[i][0]);
         const [xi, yi] = [XYpoint.x, XYpoint.y];
       	XYpoint = latLonToXY(polygon[j][1],polygon[j][0]);
         const [xj, yj] = [XYpoint.x, XYpoint.y];
 
-        const intersect = ((yi > y) !== (yj > y)) &&
-                          (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        const intersect = (yi > y) !== (yj > y) &&
+                          x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
         if (intersect) isInside = !isInside;
     }
 
@@ -2947,14 +2949,14 @@ function getLevelAtBoundary(flightid){
 	// currently we only have 2 sectors so find the two points where it transitions from 1 to the other
 	var p1 = latLonToXY(50.6922, -1.0278);
 	var p2 = latLonToXY(52.889, -1.2775);
-
-	point3 = -1;
-	point4 = -1;
+	var Xfl = 0
+	let point3 = -1;
+	let point4 = -1;
 	let cS = -1;
 	for (let p=0; p < trajectories[flightid].length; p++){
-		// assing cS if unassigned and a valids sector
+		// assing cS if unassigned and a valids sector - or cS same as pS to update the point
 		let pS = trajectories[flightid][p].sector;
-		if (pS != -1 && cS == -1){
+		if (pS != -1 && (cS == -1 || cS == pS)){
 			cS = pS;
 			point3 = p;
 		}else if (cS != -1 && pS != -1 && cS != pS){
@@ -2964,11 +2966,24 @@ function getLevelAtBoundary(flightid){
 	}
 	
 	if (point3 != -1 && point4 != -1){
-		let p3 = latLongToXY(trajectories[flightid][point3].coords);
-		let p4 = latLongToXY(trajectories[flightid][point4].coords);
+		let p3 = latLonToXY(trajectories[flightid][point3].coords.lat,trajectories[flightid][point3].coords.lng);
+		let p4 = latLonToXY(trajectories[flightid][point4].coords.lat,trajectories[flightid][point4].coords.lng);
+		let t1 = trajectories[flightid][point3].time;
+		let t2 = trajectories[flightid][point4].time;
+		let xdiff = Math.abs(p3.x-p4.x);
+		let ydiff = Math.abs(p3.y-p4.y);		
 		intersectPoint = calculateIntersection(p1,p2,p3,p4);
+		
+		if (intersectPoint != undefined){
+			let ratio = (Math.abs(intersectPoint.x-p3.x))/xdiff;
+			let r = ratio;
+			let tx = t2.getTime() - t1.getTime();
+			let t = t1.getTime()+(ratio*tx);
+ 			var intersectTime = new Date(t);
+ 			Xfl = flightLevelAtTime(flightid, intersectTime);
+		}
 	}
-	return 10;								
+	return Xfl;								
 }
 
 function TdbVectorsChanged(){
