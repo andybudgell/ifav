@@ -211,12 +211,25 @@ function showInteractionVectors() {
 			// Show highlight around TDB is appropriate colour
 			if (p1.x > 0 && p1.y > 0 && p1.x < radarCanvas.width && p1.y < radarCanvas.height){    					    		
 				rctx.beginPath();
-	 			rctx.setLineDash([]);
-	 			rctx.strokeStyle = colour;
-	      	  rctx.lineWidth = 2;
-	      	  rctx.strokeRect(p1.x , p1.y-11, tdbWidth+1, tdbHeight)
-	    	}
-				
+	 			//rctx.setLineDash([]);
+	 			//rctx.strokeStyle = colour;
+	      	  //rctx.lineWidth = 2;
+	      	  //rctx.strokeRect(p1.x , p1.y-11, tdbWidth+1, tdbHeight)
+	    	
+			
+				const tdbAngleRadians = (90 * Math.PI) / 180;
+				let tdbCentreX = p1.x+(80*Math.sin(tdbAngleRadians ));
+				let tdbCentreY = p1.y-(80*Math.cos(tdbAngleRadians ));
+				let tdbX = tdbCentreX-(tdbWidth/2);
+				let tdbY = tdbCentreY-(tdbHeight/2);	    			
+    			
+
+				// Optionally, you can also draw a rectangle outline
+				rctx.setLineDash([]);
+				rctx.strokeStyle = colour;
+				rctx.lineWidth = 2;
+				rctx.strokeRect(tdbX,tdbY, tdbWidth+1, tdbHeight)
+			}	
        		rctx.beginPath();
        		rctx.setLineDash([4, 1]); // Create a dotted line pattern
    			var p0 = mapPointToRadarCanvas(radarCanvas, trajectories[flightid][0].coords.lat, trajectories[flightid][0].coords.lng);
