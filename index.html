@@ -13,6 +13,7 @@
     <script src="./emergency.js"></script>
     <script src="./conflicts.js"></script>
     <script src="./mtcd.js"></script>
+	<script src="./tra.js"></script>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 	<table id="main">
@@ -21,10 +22,21 @@
  				<table width="100%" id="time_control" class="time_control_table">
  				<tr>
  					<td id="menu" width="70%">
- 					<select name="mode" id="mode">
-						<option value="CCD">Continuous Climb and Descent</option>
-						<option value="ECD">Enhanced Conflict Detection</option>
-						<option value="ESS">Emergency</option>
+ 					<select name="mode" id="mode">						
+						<optgroup label="iFAV">
+							<option value="CCD">Continuous Climb and Descent</option>
+							<option value="ECD">Enhanced Conflict Detection</option>
+							<option value="ESS">Emergency</option>
+							<option value="TRA">TRA Events</option>
+						</optgroup>
+						<optgroup label="TBO">
+							<option value="UC1">Use Case 1</option>
+							<option value="UC1">Use Case 2</option>
+							<option value="UC1">Use Case 3</option>
+							<option value="UC1">Use Case 4</option>
+							<option value="UC1">Use Case 5</option>
+							<option value="UC1">Use Case 6</option>
+						</optgroup>
 
 					</select>
 					<button onclick="Start()">Select</button>

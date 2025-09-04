@@ -296,7 +296,9 @@ function probeTrajectories()
 			for (k = 0; k < keys.length; k++)
 			{			
 				var iflights = iMap.get(keys[k]);
-				if (iflights.length > 1 && interactionVectors.length == 0)
+				// For TBO I've changed this to greater than or equal to 1 because for some reason
+				// > 1 was not showing an interaction vector 
+				if (iflights.length >= 1 && interactionVectors.length == 0)
 				{
 					console.log("more than 1");			
 					for (let i = 0; i < iflights.length; i++)

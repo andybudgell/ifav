@@ -47,11 +47,11 @@ var popupInteractionTable;
 
 // Populate the conflict window popup with interaction details
 function populatePopup(force){
-if (popupInteractionDetails.length > 1 || force == true)
+if (popupInteractionDetails.length >= 1 || force == true)
 {
 	if (conflictPopup.style.display=='none'){
 			
-		if (popupInteractionDetails.length > 1){
+		if (popupInteractionDetails.length >= 1){
 			const l1 = document.getElementById('conflictdata');
 			// remove table data
 			if (l1 !== null){
@@ -123,10 +123,18 @@ if (popupInteractionDetails.length > 1 || force == true)
 			let flightid = popupInteractionDetails[0].flightid;
 			action1.innerHTML = "No suggested action";
 			if (popupInteractionDetails.length > 0){
-				let suggestion = popupInteractionDetails[1].suggestion;
+				let suggestion = popupInteractionDetails[0].suggestion;
+				if (popupInteractionDetails > 1){
+					let suggestion = popupInteractionDetails[1].suggestion;
+				}
 				// Prepped conflict events have specific suggestions, whereas auto conflict detections are randomised.
 				if (suggestion == 0){
-					suggestion = x;
+					if (mode == "UC1"){
+						suggestion = 4;
+					}
+					else {
+						suggestion = x;
+					}
 				}
 				if (suggestion  == 2){						
 					suggestedHeading = +trackPositions[popupInteractionDetails[0].flightid].bearing.toFixed()+Number(sd);			
@@ -172,12 +180,30 @@ if (popupInteractionDetails.length > 1 || force == true)
 						enterClearance();
 						closeConflictPopup();
 				    };
-				 }		  			
+				 }
+				 else if (suggestion == 4){
+					action1.innerHTML = "Change level to "+suggestedLevel;
+					previewbut.onclick = function() {						
+						HookFlight(flightid);
+						removeProbeEvent();
+						selectedClearanceIssueTime = 1;
+						selectedClearanceTime = 10;
+						selectedClearanceLevel =suggestedLevel;
+						levelClearanceProbeChanged(); 
+						enterbut.disabled = false; 			 			
+				    };
+				    enterbut.onclick = function() {												
+						enterClearance();
+						closeConflictPopup();
+				    };
+				 }
 
 			}
 			action1.colSpan = 3;	
 			actionsRow.appendChild(action1);
 			actionsTable.appendChild(actionsRow);
+			actionsTable.appendChild(actionsRow);
+			
 			
    			let buttonRow = document.createElement('tr');									    
 		    previewCell.appendChild(previewbut);

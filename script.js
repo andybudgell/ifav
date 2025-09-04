@@ -1,5 +1,6 @@
 document.body.style.userSelect = "none";
 geojsonFixData = fixData;
+tboGeojsonFixData = tboFixData;
 var mode = "ALL";
 var radarCanvas;
 var toprightCanvas;
@@ -105,6 +106,10 @@ let tamaWestNorthFlights = [
 {callsign: "MEL51", startTime: "09:00:00", ifl: 340, initSpeed: 300,exitCode:"IC",fixroute:routes[5]},
 {callsign: "LWA61", startTime: "09:00:00", ifl: 340, initSpeed: 300,exitCode:"IC",fixroute:routes[6]}];
 
+let tboFlights = [
+{callsign: "UAL145", startTime: "09:00:00", ifl: 360, initSpeed: 300,exitCode:"IC",fixroute:[{name:"FIX1"},{name:"LAGAV"},{name:"NEVIS"}]},
+{callsign: "DAL31", startTime: "09:00:00", ifl: 360, initSpeed: 260,exitCode:"IC",fixroute:[{name:"FIX2"},{name:"FIX3"},{name:"FIX4"},{name:"ORSUM"}]}
+];
 
 function deepCopyMap(originalMap) {
     return new Map(
@@ -141,16 +146,21 @@ function addTamaClearanceEvents(){
 
 }
 function initEvents(){
-	initClearanceEvents.set(getFlightId("EZY687"),[{issue_time:"09:01:00",time:"09:02:00",level:210,probe:false},{issue_time:"09:04:00",time:"09:09:00",level: 220,probe:false},{issue_time:"09:13:00",time:"09:15:10",level: 250,probe:false}]);
-	initClearanceEvents.set(getFlightId("BAW123"),[{issue_time:"09:13:00",time:"09:27:00",level: 290,probe:false}]);
-	initClearanceEvents.set(getFlightId("RYR209"),[{issue_time:"09:05:00",time:"09:07:00",level: 250,probe:false},{issue_time:"09:10:00",time:"09:13:10",level: 300,probe:false},{issue_time:"09:13:30",time:"09:17:00",level:310,probe:false}]);
-	initClearanceEvents.set(getFlightId("THA092"),[{issue_time:"09:00:30",time:"09:15:00",level: 10,probe:false}]);
-	initClearanceEvents.set(getFlightId("EIN72"),[{issue_time:"09:14:00",time:"09:27:00",level: 250,probe:false}]);
-	initClearanceEvents.set(getFlightId("DAL777"),[{issue_time:"09:02:00",time:"09:10:00",level: 320,probe:false}]);
+	if (mode == "UC1"){
+		clearanceEvents = new Map();
+	}
+	else{
+		initClearanceEvents.set(getFlightId("EZY687"),[{issue_time:"09:01:00",time:"09:02:00",level:210,probe:false},{issue_time:"09:04:00",time:"09:09:00",level: 220,probe:false},{issue_time:"09:13:00",time:"09:15:10",level: 250,probe:false}]);
+		initClearanceEvents.set(getFlightId("BAW123"),[{issue_time:"09:13:00",time:"09:27:00",level: 290,probe:false}]);
+		initClearanceEvents.set(getFlightId("RYR209"),[{issue_time:"09:05:00",time:"09:07:00",level: 250,probe:false},{issue_time:"09:10:00",time:"09:13:10",level: 300,probe:false},{issue_time:"09:13:30",time:"09:17:00",level:310,probe:false}]);
+		initClearanceEvents.set(getFlightId("THA092"),[{issue_time:"09:00:30",time:"09:15:00",level: 10,probe:false}]);
+		initClearanceEvents.set(getFlightId("EIN72"),[{issue_time:"09:14:00",time:"09:27:00",level: 250,probe:false}]);
+		initClearanceEvents.set(getFlightId("DAL777"),[{issue_time:"09:02:00",time:"09:10:00",level: 320,probe:false}]);
 
 
-	clearanceEvents = deepCopyMap(initClearanceEvents);
-	addTamaClearanceEvents();
+		clearanceEvents = deepCopyMap(initClearanceEvents);
+		addTamaClearanceEvents();
+	}
 }
 
 const clearanceEventColours = ['rgb(80,180,25)','rgb(51,111,166)','rgb(230,200,50)','rgb(255,255,0)','rgb(255,0,255)','rgb(0,255,255)'];
@@ -218,15 +228,34 @@ function GenerateRandomFlights()
 }
 
 // Initialise flights object with 
-function initFlights(){
+function initFlights(mode){
 	flights = [];
-	testflights = testflights.concat(tamaEastSouthFlights);
-	testflights = testflights.concat(tamaWestNorthFlights);
+	if (mode == "UC1"){
+		testflights = tboFlights;
+	}
+	else
+	{
+		testflights = testflights.concat(tamaEastSouthFlights);
+		testflights = testflights.concat(tamaWestNorthFlights);
+	}
+	
 	flights = JSON.parse(JSON.stringify(testflights));
 }
-function initData(){
-	initFlights();
+function initData(mode){
+	initFixes(mode)
+	initFlights(mode);
 	initEvents();
+}
+
+function initFixes(mode){
+		if (mode == "UC1")
+		{
+			geojsonFixData = tboFixData;
+		}
+		else
+		{
+			geojsonFixData = fixData;
+		}
 }
 initData();
 
@@ -673,7 +702,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     				   doubleClickZoom: false }).setView([centre.lat,centre.lng], 9);
 		
     // Add sectors data to the map
-    L.geoJSON(sectorData, {
+    const sectorsLayer = L.geoJSON(sectorData, {
          style: function (feature) {
 		if (feature.properties.name[0].text === "SWANWICK AC S12_1")
 		{
@@ -722,7 +751,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		//var fixesLayer = L.geoJSON(geojsonFixData,{
         //    pointToLayer: pointToLayer
         //});
-        var fixesLayer = L.geoJSON(geojsonFixData,{
+    var fixesLayer = L.geoJSON(geojsonFixData,{
     // This overrides the default marker behavior
     pointToLayer: function (feature, latlng) {
         // Customize the marker as a circle
@@ -746,9 +775,34 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 fillOpacity: 0
             }); // Bind a popup to each feature
         }
-    }
-   
-});        
+    }   
+	});
+	var tboFixesLayer = L.geoJSON(tboFixData,{
+    // This overrides the default marker behavior
+    pointToLayer: function (feature, latlng) {
+        // Customize the marker as a circle
+        return L.circleMarker(latlng, {
+            radius: 2,           // Circle size
+            fillColor: "#a0a0a0", // Fill color
+            color: "#000",        // Border color
+            weight: 1,            // Border width
+            opacity: 1,           // Border opacity
+            fillOpacity: 0.8      // Fill opacity
+        });
+    },
+    onEachFeature: function (feature, layer) {
+        if (feature.properties && feature.properties.name) {
+            layer.bindTooltip(feature.properties.name,{	
+                permanent: true,
+                direction: 'bottom',
+                className: 'fix-tooltip',
+                fillColor: 'black',
+                opacity: 0.3,
+                fillOpacity: 0
+            }); // Bind a popup to each feature
+        }
+    }   
+	});        	
 		// Function to style the point feature
         function airportToLayer(feature, latlng) {
             var geojsonMarkerOptions = {
@@ -778,7 +832,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	 
         // Disable the map tiles
 		var mapLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', { attribution: '&copy; Stamen Design', maxZoom:20, minZoom:6.5 });
-	    //var mapLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}.png', { attribution: '&copy; Stamen Design', maxZoom:20, minZoom:6.5 });
+	    //var mapLayer = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', { attribution: '&copy; Stamen Design', maxZoom:20, minZoom:6.5 });
+		//var mapLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Stamen Design', maxZoom:20, minZoom:6.5 });
+
 
 		// Define base layers (for layer control, optional)
 	    var baseLayers = {
@@ -786,8 +842,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 	    // Define overlay layers (can toggle GeoJSON layers)
 	    var overlayLayers = {
+			"TBO Fixes": tboFixesLayer,
 	        "Fixes": fixesLayer,
-	        "Airports": airportLayer,
+	        //"Airports": airportLayer,
 	        "Coast" : mapLayer 
 	    };
 
@@ -1617,8 +1674,11 @@ function drawRoute(flightid) {
 
 	if (TDBShapes.has(flightid)){
 		
-        const centerX = TDBShapes.get(flightid).x;
-        const centerY = TDBShapes.get(flightid).y;
+        const oldcenterX = TDBShapes.get(flightid).x;
+        const oldcenterY = TDBShapes.get(flightid).y;		
+		const centre = mapPointToRadarCanvas(radarCanvas, trackPositions[flightid].coords.lat, trackPositions[flightid].coords.lng);
+		const centerX = centre.x
+		const centerY = centre.y
 		let colour = 'white';
 		if (flightid == emergencyFlightId){
 			colour = 'red';
@@ -2754,6 +2814,8 @@ function Start()
 	// E.g. Emergency will enable emergency events
 	clearInterval(onTickIntervalId);
 	clearInterval(updateDataIntervalId);
+	clearInterval(conflictEventsIntervalId);
+	clearInterval(emergencyEventsIntervalId);
 	
 	mode = document.getElementById('mode').value;
 	if (mode == "CCD"){
@@ -2791,10 +2853,9 @@ function Start()
 		emergencyEventsIntervalId = setInterval(pollEmergencyEvents,1000);
 		map.setView([51.08195849927352, -1.7997468147947484], 9);
 		//hookedFlight = 2;
-
 	}	
 	else if (mode == "ECD"){
-	// reset the clock and add the default flights and clearance events
+		// reset the clock and add the default flights and clearance events
 		simTime = setTimeFromString(simTime, nineOclock);
 		initData();
 		// Setup emergency events and aircraft
@@ -2805,11 +2866,34 @@ function Start()
 		TDBShapes.clear();
 		calculateInitialTrackPositions();
 	   	calculateTrajectoriesV2();
-
 	}
-
+	else if (mode == "TRA"){
+		// reset the clock and add the default flights and clearance events
+		simTime = setTimeFromString(simTime, nineOclock);
+		initData();
+		populateClearanceTable(-1);
+		TDBShapes.clear();
+		calculateInitialTrackPositions();
+	   	calculateTrajectoriesV2();		
+		createtraEvents();
+		traEventsIntervalId = setInterval(polltraEvents,1000);
+	}
+	else if (mode == "UC1"){
+		// reset the clock and add the default flights and clearance events
+		simTime = setTimeFromString(simTime, nineOclock);
+		initData("UC1");
+		populateClearanceTable(-1);
+		TDBShapes.clear();
+		calculateInitialTrackPositions();
+	   	calculateTrajectoriesV2();		
+		createtraEvents();
+		traEventsIntervalId = setInterval(polltraEvents,1000);
+		map.panTo(new L.LatLng(56.893, -4.202));
+		
+	}
+	
 	onTickIntervalId = setInterval(onTick,1000);
-    updateDataIntervalId = setInterval(updateData,2000);
+	updateDataIntervalId = setInterval(updateData,2000);
 
 }
 
