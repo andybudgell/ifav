@@ -11,6 +11,10 @@ function createConflictEvents(){
 	conflictEvents.push(conflictEvent3);
 }
 
+var tboSuggestions = new Array();
+
+
+
 function pollConflictEvents(){
 	for (e = 0; e < conflictEvents.length; e++){
 		var etime = new Date();
@@ -98,7 +102,7 @@ if (popupInteractionDetails.length >= 1 || force == true)
 			
 			let actionsTable = document.createElement('table');
 			actionsTable.id = "actionsTable";
-			let actionsRow = document.createElement('tr');							
+			let actionRow = document.createElement('tr');							
 			let action1 = document.createElement('td');	
 			enterbut = document.createElement('button');
 		    enterCell = document.createElement('td');
@@ -112,6 +116,7 @@ if (popupInteractionDetails.length >= 1 || force == true)
 		    previewbut.style.color='orange';
 		    previewbut.id = "preview1";
 		    previewbut.disabled = false;
+			
 			// randomise whether its a heading or speed suggestion
 			let x = getRandomNumber(2,3);
 			let hd = getRandomNumber(5,15);
@@ -119,9 +124,11 @@ if (popupInteractionDetails.length >= 1 || force == true)
 			let ld = getRandomNumber(1,2)*10;
 			let suggestedHeading = 0;
 			let suggestedSpeed = 0;
-			let suggestedLevel = 300;
+			let suggestedLevel = 250;
 			let flightid = popupInteractionDetails[0].flightid;
 			action1.innerHTML = "No suggested action";
+			let numActions = 1;
+
 			if (popupInteractionDetails.length > 0){
 				let suggestion = popupInteractionDetails[0].suggestion;
 				if (popupInteractionDetails > 1){
@@ -129,8 +136,9 @@ if (popupInteractionDetails.length >= 1 || force == true)
 				}
 				// Prepped conflict events have specific suggestions, whereas auto conflict detections are randomised.
 				if (suggestion == 0){
-					if (mode == "UC1"){
+					if (mode.startsWith("UC1")){
 						suggestion = 4;
+						numActions = 3;
 					}
 					else {
 						suggestion = x;
@@ -182,36 +190,212 @@ if (popupInteractionDetails.length >= 1 || force == true)
 				    };
 				 }
 				 else if (suggestion == 4){
-					action1.innerHTML = "Change level to "+suggestedLevel;
-					previewbut.onclick = function() {						
+					 const enterButtons = [];
+					 const previewButtons = [];
+					 
+					 let action1Row = document.createElement('tr');							
+					 let action1Text = document.createElement('td');	
+					 suggestedLevel = trackPositions[popupInteractionDetails[0].flightid].level+10;
+					 action1Text.innerHTML = "Change level to "+suggestedLevel;
+					 enterbut = document.createElement('button');
+					 enterCell = document.createElement('td');
+					 enterbut.textContent = "Accept";
+					 enterbut.style.color='green';
+					 enterbut.id = "enter1";
+					 enterbut.disabled = true;
+					 enterbut.onclick = function() {												
+						enterClearance();
+						closeConflictPopup();
+				     };
+					 enterButtons.push(enterbut);
+					 
+					 previewbut = document.createElement('button');
+					 previewCell = document.createElement('td');
+					 previewbut.textContent = "Preview";
+					 previewbut.style.color='orange';
+					 previewbut.id = "preview1";
+					 previewbut.disabled = false;
+					 previewButtons.push(previewbut);
+					 					 
+					 previewbut.onclick = function() {						
 						HookFlight(flightid);
 						removeProbeEvent();
 						selectedClearanceIssueTime = 1;
-						selectedClearanceTime = 10;
+						selectedClearanceTime = 5;
 						selectedClearanceLevel =suggestedLevel;
 						levelClearanceProbeChanged(); 
 						enterbut.disabled = false; 			 			
 				    };
-				    enterbut.onclick = function() {												
+					action1Text.colSpan = 2;
+					action1Row.appendChild(action1Text);
+					previewButtonCell = document.createElement('td');
+					previewButtonCell.appendChild(previewbut);
+					action1Row.appendChild(previewButtonCell);
+					enterButtonCell = document.createElement('td');
+					enterButtonCell.appendChild(enterbut);
+					action1Row.appendChild(enterButtonCell);
+					actionsTable.appendChild(action1Row);					
+					
+					// Suggestion 2
+					let action2Row = document.createElement('tr');							
+					let action2Text = document.createElement('td');
+					
+					action2Text.innerHTML = "Change Heading to "+suggestedLevel;
+					 enterbut2 = document.createElement('button');
+					 enterCell2 = document.createElement('td');
+					 enterbut2.textContent = "Accept";
+					 enterbut2.style.color='green';
+					 enterbut2.id = "enter2";
+					 enterbut2.disabled = true;
+					 enterbut2.onclick = function() {												
 						enterClearance();
 						closeConflictPopup();
-				    };
+				     };
+					 enterButtons.push(enterbut2);
+				     suggestedHeading = +trackPositions[popupInteractionDetails[0].flightid].bearing.toFixed()+Number(sd);			
+					 action2Text.innerHTML = "Change heading to "+suggestedHeading;
+					 previewbut2 = document.createElement('button');
+					 previewCel2 = document.createElement('td');
+					 previewbut2.textContent = "Preview";
+					 previewbut2.style.color='orange';
+					 previewbut2.id = "preview2";
+					 previewbut2.disabled = false;
+					 previewButtons.push(previewbut2);
+					 previewbut2.onclick = function() {						
+						HookFlight(flightid);
+						removeProbeEvent();
+						document.getElementById('heading-input').value = suggestedHeading;
+						headingChanged();
+						enterbut2.disabled = false;
+					 };					 				
+					 action2Text.colSpan = 2;
+					action2Row.appendChild(action2Text);
+					previewButtonCell2 = document.createElement('td');
+					previewButtonCell2.appendChild(previewbut2);
+					action2Row.appendChild(previewButtonCell2);
+					enterButtonCell2 = document.createElement('td');
+					enterButtonCell2.appendChild(enterbut2);
+					action2Row.appendChild(enterButtonCell2);
+					actionsTable.appendChild(action2Row);	
+					
+					// Suggestion 3
+					let action3Row = document.createElement('tr');							
+					let action3Text = document.createElement('td');
+					action3Text.innerHTML = "Change Heading to "+suggestedLevel;
+					 enterbut3 = document.createElement('button');
+					 enterCell3 = document.createElement('td');
+					 enterbut3.textContent = "Accept";
+					 enterbut3.style.color='green';
+					 enterbut3.id = "enter3";
+					 enterbut3.disabled = true;
+					 enterbut3.onclick = function() {												
+						enterClearance();
+						closeConflictPopup();
+				     };
+					 enterButtons.push(enterbut3);
+				     suggestedHeading = +trackPositions[popupInteractionDetails[0].flightid].bearing.toFixed()+Number(sd);			
+					 action3Text.innerHTML = "Change heading to "+suggestedHeading;
+					 previewbut3 = document.createElement('button');
+					 previewCel3 = document.createElement('td');
+					 previewbut3.textContent = "Preview";
+					 previewbut3.style.color='orange';
+					 previewbut3.id = "preview3";
+					 previewbut3.disabled = false;
+					 previewButtons.push(previewbut3);
+					 previewbut3.onclick = function() {						
+						HookFlight(flightid);
+						removeProbeEvent();
+						document.getElementById('heading-input').value = suggestedHeading;
+						headingChanged();
+						enterbut3.disabled = false;
+					 };					 				
+					 action3Text.colSpan = 2;
+					action3Row.appendChild(action3Text);
+					previewButtonCell3 = document.createElement('td');
+					previewButtonCell3.appendChild(previewbut3);
+					action3Row.appendChild(previewButtonCell3);
+					enterButtonCell3 = document.createElement('td');
+					enterButtonCell3.appendChild(enterbut3);
+					action3Row.appendChild(enterButtonCell3);
+					actionsTable.appendChild(action3Row);	
+					
+
+					// Suggestion 4
+					let action4Row = document.createElement('tr');							
+					let action4Text = document.createElement('td');
+					action4Text.innerHTML = "Change ROCD to "+suggestedLevel;
+					 enterbut4 = document.createElement('button');
+					 enterCell4 = document.createElement('td');
+					 enterbut4.textContent = "Accept";
+					 enterbut4.style.color='green';
+					 enterbut4.id = "enter4";
+					 enterbut4.disabled = true;
+					 enterbut4.onclick = function() {												
+						enterClearance();
+						closeConflictPopup();
+				     };
+					 enterButtons.push(enterbut4);
+					 let trackCurrentLevel = trackPositions[popupInteractionDetails[0].flightid].level;
+					 let hypotheticalNextLevel = trackCurrentLevel+20;
+					 var itime = new Date();
+					 itime = setTimeFromString(itime, popupInteractionDetails[0].time);
+					 let simTimeMS = simTime.getTime();
+					 let interactionTimeMS = itime.getTime();
+														
+					 let timeDiffMs = interactionTimeMS-simTimeMS;
+					 let timeDiffMins = timeDiffMs/(1000*60);
+   					 currentROCD = Math.round((hypotheticalNextLevel*100-trackCurrentLevel*100)/(timeDiffMins));
+
+					 action4Text.innerHTML = "Change ROCD to "+currentROCD;
+					 previewbut4 = document.createElement('button');
+					 previewCel4 = document.createElement('td');
+					 previewbut4.textContent = "Preview";
+					 previewbut4.style.color='orange';
+					 previewbut4.id = "preview4";
+					 previewbut4.disabled = false;
+					 previewButtons.push(previewbut4);
+					 previewbut4.onclick = function() {						
+						HookFlight(flightid);
+						removeProbeEvent();
+						selectedClearanceIssueTime = 1;
+						selectedClearanceTime = timeDiffMins;
+						selectedClearanceLevel = hypotheticalNextLevel;
+						levelClearanceProbeChanged(); 
+						enterbut4.disabled = false;
+					 };					 				
+					 action4Text.colSpan = 2;
+					action4Row.appendChild(action4Text);
+					previewButtonCell4 = document.createElement('td');
+					previewButtonCell4.appendChild(previewbut4);
+					action4Row.appendChild(previewButtonCell4);
+					enterButtonCell4 = document.createElement('td');
+					enterButtonCell4.appendChild(enterbut4);
+					action4Row.appendChild(enterButtonCell4);
+					actionsTable.appendChild(action4Row);	
+
+
+					
+					 
+					conflictPopup.appendChild(actionsTable);	
+
+					
+					
 				 }
 
 			}
-			action1.colSpan = 3;	
-			actionsRow.appendChild(action1);
-			actionsTable.appendChild(actionsRow);
-			actionsTable.appendChild(actionsRow);
+			if (numActions == 1){
+				action1.colSpan = 3;	
+				actionRow.appendChild(action1);
+				actionsTable.appendChild(actionRow);							
 			
-			
-   			let buttonRow = document.createElement('tr');									    
-		    previewCell.appendChild(previewbut);
-	    	buttonRow.appendChild(previewCell);
-	    	enterCell.appendChild(enterbut);
-	    	buttonRow.appendChild(enterCell);   			
-   			actionsTable.appendChild(buttonRow);
-			conflictPopup.appendChild(actionsTable);	
+				let buttonRow = document.createElement('tr');									    
+				previewCell.appendChild(previewbut);
+				buttonRow.appendChild(previewCell);
+				enterCell.appendChild(enterbut);
+				buttonRow.appendChild(enterCell);   			
+				actionsTable.appendChild(buttonRow);
+				conflictPopup.appendChild(actionsTable);	
+			}
 
 		}
 	
@@ -316,7 +500,7 @@ function AutoDetectionChanged(){
 
 const conflictPopup = document.createElement('div');
 	conflictPopup.style.width = '300px';
-    conflictPopup.style.height = '250px';
+    conflictPopup.style.height = '350px';
     conflictPopup.style.position = 'absolute';
     conflictPopup.style.top = '100px';
     conflictPopup.style.left = '500px';
