@@ -106,11 +106,16 @@ let tamaWestNorthFlights = [
 {callsign: "MEL51", startTime: "09:00:00", ifl: 340, initSpeed: 300,exitCode:"IC",fixroute:routes[5]},
 {callsign: "LWA61", startTime: "09:00:00", ifl: 340, initSpeed: 300,exitCode:"IC",fixroute:routes[6]}];
 
-let tboFlights = [
+let tboFlightsUC1 = [
 {callsign: "UAL145", startTime: "09:00:00", ifl: 360, initSpeed: 300,exitCode:"IC",fixroute:[{name:"FIX1"},{name:"LAGAV"},{name:"NEVIS"}]},
 {callsign: "DAL31", startTime: "09:00:00", ifl: 360, initSpeed: 260,exitCode:"IC",fixroute:[{name:"FIX2"},{name:"FIX3"},{name:"FIX4"},{name:"ORSUM"}]}
 ];
 
+let tboFlightsUC2 = [
+{callsign: "VIR24M",startTime: "09:00:00",ifl: 390,initSpeed: 300,exitCode:"IC",fixroute:[{name:"FOXLA"},{name:"OXCUD"},{name:"DIDZA"},{name:"NORRY"},{name:"EGKK"}]}, 
+{callsign: "BAW15K",startTime: "09:00:00",ifl: 090,initSpeed: 300,exitCode:"IC",fixroute:[{name:"NORRY"},{name:"DIDZA"},{name:"OXCUD"},{name:"FOXLA"},{name:"KRAGY"}]}, 
+{callsign: "RYR6RJ",startTime: "09:00:00",ifl: 240,initSpeed: 300,exitCode:"IC",fixroute:[{name:"TELBA"},{name:"OXCUD"},{name:"EPACE"},{name:"SIDDI"}]}
+];
 function deepCopyMap(originalMap) {
     return new Map(
         [...originalMap].map(([key, value]) => 
@@ -148,6 +153,12 @@ function addTamaClearanceEvents(){
 function initEvents(){
 	if (mode == "UC1"){
 		clearanceEvents = new Map();
+	} else if (mode == "UC2"){
+   	    clearanceEvents = new Map();
+		clearanceEvents.set(getFlightId("BAW15K"),[{issue_time:"09:17:00",time:"09:27:00",level:200,probe:false}]);
+		clearanceEvents.set(getFlightId("RYR6RJ"),[{issue_time:"09:02:00",time:"09:09:00",level:350,probe:false}]);
+		clearanceEvents.set(getFlightId("VIR24M"),[{issue_time:"09:00:00",time:"09:32:00",level:070,probe:false}]);
+
 	}
 	else{
 		initClearanceEvents.set(getFlightId("EZY687"),[{issue_time:"09:01:00",time:"09:02:00",level:210,probe:false},{issue_time:"09:04:00",time:"09:09:00",level: 220,probe:false},{issue_time:"09:13:00",time:"09:15:10",level: 250,probe:false}]);
@@ -231,7 +242,10 @@ function GenerateRandomFlights()
 function initFlights(mode){
 	flights = [];
 	if (mode == "UC1"){
-		testflights = tboFlights;
+		testflights = tboFlightsUC1;
+	}
+	else if (mode == "UC2"){
+		testflights = tboFlightsUC2;
 	}
 	else
 	{
@@ -2886,8 +2900,21 @@ function Start()
 		TDBShapes.clear();
 		calculateInitialTrackPositions();
 	   	calculateTrajectoriesV2();		
-		createtraEvents();
-		traEventsIntervalId = setInterval(polltraEvents,1000);
+		//createtraEvents();
+		//traEventsIntervalId = setInterval(polltraEvents,1000);
+		map.panTo(new L.LatLng(56.893, -4.202));
+		
+	}
+	else if (mode == "UC2"){
+		// reset the clock and add the default flights and clearance events
+		simTime = setTimeFromString(simTime, nineOclock);
+		initData("UC2");
+		populateClearanceTable(-1);
+		TDBShapes.clear();
+		calculateInitialTrackPositions();
+	   	calculateTrajectoriesV2();		
+		//createtraEvents();
+		//traEventsIntervalId = setInterval(polltraEvents,1000);
 		map.panTo(new L.LatLng(56.893, -4.202));
 		
 	}
